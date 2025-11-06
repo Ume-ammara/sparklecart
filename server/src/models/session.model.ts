@@ -3,6 +3,13 @@ import mongoose, { Schema } from "mongoose";
 export interface ISession {
   user: mongoose.Types.ObjectId;
   refreshToken: string;
+  ipAddress?: string;
+  userAgent?: string;
+  device?: string;
+  os?: string;
+  browser?: string;
+  isValid?: boolean;
+  expiresAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -16,8 +23,34 @@ const sessionSchema: Schema<ISession> = new Schema(
     },
     refreshToken: {
       type: String,
-      required: true,
       trim: true,
+    },
+    ipAddress: {
+      type: String,
+      trim: true,
+    },
+    userAgent: {
+      type: String,
+      trim: true,
+    },
+    device: {
+      type: String,
+      trim: true,
+    },
+    os: {
+      type: String,
+      trim: true,
+    },
+    browser: {
+      type: String,
+      trim: true,
+    },
+    isValid: {
+      type: Boolean,
+      default: true,
+    },
+    expiresAt: {
+      type: Date,
     },
   },
   { timestamps: true }

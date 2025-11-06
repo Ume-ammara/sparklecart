@@ -5,7 +5,9 @@
     "target": "es2020",
     "sourceMap": true,
     "outDir": "dist",
-    "typeRoots": ["./types", "./node_modules/@types"]
+    "typeRoots": ["./types", "./node_modules/@types"],
+    // Resend react types issue fix
+    "skipLibCheck": true
   },
   "include": ["src/**/*"]
 }

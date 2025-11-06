@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 // Custom Middleware can be added here
 
@@ -22,8 +24,10 @@ connectDB();
 // Importing all routes here
 import { healthRouter } from "./routes/health.route.js";
 import { connectDB } from "./db/connection.db.js";
+import { authRouter } from "./routes/auth.route.js";
 
 // Using all routes here
 app.use("/api/v1/health", healthRouter);
+app.use("/api/v1/auth", authRouter);
 
 export { app };
