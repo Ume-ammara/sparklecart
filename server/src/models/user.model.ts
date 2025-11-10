@@ -3,12 +3,14 @@ import mongoose, { Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import { env } from "../config/env.config.js";
 
+import { USER_ROLES_ENUM, USER_ROLES_TYPE } from "../constants/user.constant.js";
+
 export interface IUser {
   _id: mongoose.Types.ObjectId;
   fullname: string;
   email: string;
   password: string;
-  role: "USER" | "SELLER" | "ADMIN";
+  role: USER_ROLES_TYPE;
   isDeleted?: boolean;
   isEmailVerified?: boolean;
   emailVerificationToken?: string;
@@ -44,8 +46,8 @@ const userSchema: Schema<IUser> = new Schema(
     },
     role: {
       type: String,
-      enum: ["USER", "SELLER", "ADMIN"],
-      default: "USER",
+      enum: USER_ROLES_ENUM,
+      default: "user",
     },
     isDeleted: {
       type: Boolean,

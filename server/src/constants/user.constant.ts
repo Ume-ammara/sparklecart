@@ -1,7 +1,8 @@
 export const USER_ROLES = {
+  ADMIN: "admin",
   USER: "user",
   SELLER: "seller",
-  ADMIN: "admin",
 } as const;
 
-export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
+export const USER_ROLES_ENUM = Object.values(USER_ROLES);
+export type USER_ROLES_TYPE = typeof USER_ROLES_ENUM[number];
