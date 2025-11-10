@@ -25,9 +25,11 @@ connectDB();
 import { healthRouter } from "./routes/health.route.js";
 import { connectDB } from "./db/connection.db.js";
 import { authRouter } from "./routes/auth.route.js";
+import { sellerRouter } from "./routes/seller.route.js";
 
 // Using all routes here
 app.use("/api/v1/health", healthRouter);
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/seller", sellerRouter);
 
 export { app };
