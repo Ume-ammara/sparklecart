@@ -5,14 +5,13 @@ import { becomeAsellerSchema } from "../schemas/seller.schema.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 export const becomeASellerController = asyncHandler(async (req: Request, res: Response) => {
-  
   const { data } = becomeAsellerSchema.safeParse({ ...req.body, userId: req.user?._id });
-  console.log("Store data", data);
-  const sellerStore = await becomeASellerService(data);
+
+  const { user, store } = await becomeASellerService(data);
 
   return res
     .status(201)
-    .json(new ApiResponse(201, "Seller store created successfully", { sellerStore }));
+    .json(new ApiResponse(201, "Seller store created successfully", { user, store }));
 });
 
 export const createProductController = asyncHandler(async (req: Request, res: Response) => {});

@@ -32,4 +32,9 @@ app.use("/api/v1/health", healthRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/seller", sellerRouter);
 
+
+// Error handling middleware
+import { errorHandler } from "./middlewares/error.middleware.js";
+app.use(errorHandler);
+
 export { app };

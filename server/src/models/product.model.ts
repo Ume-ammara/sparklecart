@@ -5,7 +5,8 @@ export interface IProduct {
   description: string;
   price: number;
   category: mongoose.Types.ObjectId;
-  stock: number;
+  quantity: number;
+  images: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -30,11 +31,17 @@ const productSchema: Schema<IProduct> = new Schema(
       ref: "Category",
       required: true,
     },
-    stock: {
+    quantity: {
       type: Number,
       required: true,
       min: 0,
     },
+    images: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -1,8 +1,8 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface ISeller {
-  storeName: string;
-  storeDescription: string;
+  name: string;
+  description: string;
   user: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -10,12 +10,12 @@ export interface ISeller {
 
 const sellerSchema: Schema<ISeller> = new Schema(
   {
-    storeName: {
+    name: {
       type: String,
       required: true,
       trim: true,
     },
-    storeDescription: {
+    description: {
       type: String,
       trim: true,
     },
