@@ -1,5 +1,5 @@
 export interface AppUser {
-  id: string;
+  _id: string;
   email: string;
   role: string;
   sessionId: string;
