@@ -15,10 +15,13 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 export const becomeASellerController = asyncHandler(async (req: Request, res: Response) => {
   const { data } = becomeAsellerSchema.safeParse({ ...req.body, userId: req.user?._id });
 
-  const { user, store } = await becomeASellerService(data);
+  const { user, store, accessToken, accessTokenOptions, refreshToken, refreshTokenOptions } =
+    await becomeASellerService(data);
 
   return res
     .status(201)
+    .cookie("accessToken", accessToken, accessTokenOptions)
+    .cookie("refreshToken", refreshToken, refreshTokenOptions)
     .json(new ApiResponse(201, "Seller store created successfully", { user, store }));
 });
 
@@ -32,10 +35,10 @@ export const createProductController = asyncHandler(async (req: Request, res: Re
 
 export const getAllSellerProductsController = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user._id;
-  const allProducts = await getAllSellerProductsService(userId);
-  res
-    .status(200)
-    .json(new ApiResponse(200, "Seller products fetched successfully", { allProducts }));
+
+  const products = await getAllSellerProductsService(userId);
+
+  res.status(200).json(new ApiResponse(200, "Seller products fetched successfully", { products }));
 });
 
 export const deleteAllSellerProductsController = asyncHandler(

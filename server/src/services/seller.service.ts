@@ -7,11 +7,12 @@ import { ApiError } from "../utils/ApiError.js";
 import { logger } from "../utils/logger.js";
 import { Product } from "../models/product.model.js";
 import { Category } from "../models/category.model.js";
+import { cookieOptions } from "../config/cookie.config.js";
 
 export const becomeASellerService = async ({ name, description, userId }: BecomeASellerDTO) => {
   logger.info(`Create seller store service called for user: ${userId}`);
 
-  const existingStore = await User.findOne({ userId });
+  const existingStore = await Seller.findOne({ user: userId });
 
   if (existingStore) {
     logger.warn(`User: ${userId} already has a seller store`);
@@ -31,9 +32,15 @@ export const becomeASellerService = async ({ name, description, userId }: Become
     logger.info(`User: ${userId} marked as seller`);
   }
 
+  const accessToken = await user.generateAccessToken();
+  const accessTokenOptions = cookieOptions(30);
+
+  const refreshToken = await user.generateRefreshToken();
+  const refreshTokenOptions = cookieOptions(60 * 24 * 30);
+
   logger.info(`Seller store created successfully for user: ${userId}`);
 
-  return { user, store };
+  return { user, store, accessToken, accessTokenOptions, refreshToken, refreshTokenOptions };
 };
 
 export const createProductService = async ({
@@ -69,11 +76,6 @@ export const createProductService = async ({
 };
 
 export const getAllSellerProductsService = async (userId: string) => {
-  const seller = await Seller.findOne({ user: userId });
-  if (!seller) {
-    throw new ApiError(401, "unauthorized request");
-  }
-
   const products = await Product.find();
   return products;
 };

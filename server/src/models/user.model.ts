@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { env } from "../config/env.config.js";
 
 import { USER_ROLES_ENUM, USER_ROLES_TYPE } from "../constants/user.constant.js";
+import { Seller } from "./seller.model.js";
 
 export interface IUser {
   _id: mongoose.Types.ObjectId;
@@ -87,9 +88,20 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 };
 
 // Access and Refresh Tokens
-userSchema.methods.generateAccessToken = function () {
+userSchema.methods.generateAccessToken = async function () {
+  let seller = null;
+  if (this.role === "seller") {
+    seller = await Seller.findOne({ user: this._id });
+  }
+
   return jwt.sign(
-    { _id: this._id, role: this.role, username: this.username, email: this.email },
+    {
+      _id: this._id,
+      role: this.role,
+      username: this.username,
+      email: this.email,
+      sellerId: seller?._id,
+    },
     env.ACCESS_TOKEN_SECRET,
     {
       expiresIn: env.ACCESS_TOKEN_EXPIRY as jwt.SignOptions["expiresIn"],
@@ -97,9 +109,20 @@ userSchema.methods.generateAccessToken = function () {
   );
 };
 
-userSchema.methods.generateRefreshToken = function () {
+userSchema.methods.generateRefreshToken = async function () {
+  let seller = null;
+  if (this.role === "seller") {
+    seller = await Seller.findOne({ user: this._id });
+  }
+
   return jwt.sign(
-    { _id: this._id, role: this.role, username: this.username, email: this.email },
+    {
+      _id: this._id,
+      role: this.role,
+      username: this.username,
+      email: this.email,
+      sellerId: seller?._id,
+    },
     env.REFRESH_TOKEN_SECRET,
     {
       expiresIn: env.REFRESH_TOKEN_EXPIRY as jwt.SignOptions["expiresIn"],

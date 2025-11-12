@@ -3,6 +3,7 @@ export interface AppUser {
   email: string;
   role: string;
   sessionId: string;
+  sellerId?: string;
   iat?: number;
   exp?: number;
 }
