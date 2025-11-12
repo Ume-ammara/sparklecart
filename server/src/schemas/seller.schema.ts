@@ -20,7 +20,10 @@ export const createProductSchema = z.object({
   price: z.number().positive(),
   quantity: z.number().int().nonnegative(),
   category: z.string().min(3).max(50),
-  images: z.array(z.string().nonempty("Image URL cannot be empty")).min(1, "At least one image is required"),
+  images: z
+    .array(z.string().nonempty("Image URL cannot be empty"))
+    .min(1, "At least one image is required")
+    .optional(),
   userId: z.string().nonempty("User id is required"),
 });
 

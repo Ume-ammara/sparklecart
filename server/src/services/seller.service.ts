@@ -5,11 +5,12 @@ import { USER_ROLES } from "../constants/user.constant.js";
 import { BecomeASellerDTO, CreateProductDTO } from "../schemas/seller.schema.js";
 import { ApiError } from "../utils/ApiError.js";
 import { logger } from "../utils/logger.js";
+import { Product } from "../models/product.model.js";
 
 export const becomeASellerService = async ({ name, description, userId }: BecomeASellerDTO) => {
   logger.info(`Create seller store service called for user: ${userId}`);
 
-  const existingStore = await Seller.findOne({ userId });
+  const existingStore = await User.findOne({ userId });
 
   if (existingStore) {
     logger.warn(`User: ${userId} already has a seller store`);
@@ -42,7 +43,26 @@ export const createProductService = async ({
   category,
   images,
   userId,
-}: CreateProductDTO) => {};
+}: CreateProductDTO) => {
+  const seller = await Seller.findById(userId);
+
+  if (!seller) {
+    throw new ApiError(401, "You are not registered as a seller");
+  }
+
+  const createProduct = await Product.create({
+    name,
+    description,
+    price,
+    quantity,
+    category,
+    images,
+  });
+
+  console.log("product", createProduct);
+
+  return createProduct;
+};
 
 export const getAllSellerProductsService = async (userId: string) => {};
 

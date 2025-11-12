@@ -21,7 +21,7 @@ export const isLoggedIn = asyncHandler(async (req: Request, res: Response, next:
 
     const decode = jwt.verify(token, env.ACCESS_TOKEN_SECRET) as AppUser;
     req.user = decode;
-    console.log("decode", decode);
+    // console.log("decode", decode);
     next();
   } catch (error) {
     throw new ApiError(401, error?.message || "Invalid access token", error);
@@ -29,6 +29,7 @@ export const isLoggedIn = asyncHandler(async (req: Request, res: Response, next:
 });
 
 export const isSeller = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
+  console.log("seller user", req.user);
   if (req.user.role !== "seller") {
     throw new ApiError(403, "Unauthorized request");
   }
