@@ -80,4 +80,6 @@ export const getAllSellerProductsService = async (userId: string) => {
   return products;
 };
 
-export const deleteAllSellerProductsService = async (userId: string) => {};
+export const deleteAllSellerProductsService = async (userId: string, sellerId: string) => {
+  await Product.deleteMany({ seller: sellerId });
+};

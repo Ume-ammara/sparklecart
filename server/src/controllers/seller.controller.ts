@@ -3,13 +3,10 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import {
   becomeASellerService,
   createProductService,
+  deleteAllSellerProductsService,
   getAllSellerProductsService,
 } from "../services/seller.service.js";
-import {
-  becomeAsellerSchema,
-  createProductSchema,
-  getAllProductsSchema,
-} from "../schemas/seller.schema.js";
+import { becomeAsellerSchema, createProductSchema } from "../schemas/seller.schema.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 export const becomeASellerController = asyncHandler(async (req: Request, res: Response) => {
@@ -42,10 +39,18 @@ export const getAllSellerProductsController = asyncHandler(async (req: Request, 
 });
 
 export const deleteAllSellerProductsController = asyncHandler(
-  async (req: Request, res: Response) => {}
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
+    const sellerId = req.user?.sellerId;
+
+    await deleteAllSellerProductsService(userId, sellerId);
+    res.status(200).json(new ApiResponse(200, "Products deleted successfully"));
+  }
 );
 
-export const updateAllProductsController = asyncHandler(async (req: Request, res: Response) => {});
+export const updateAllProductsController = asyncHandler(async (req: Request, res: Response) => {
+  
+});
 export const getProductByIdController = asyncHandler(async (req: Request, res: Response) => {});
 export const updateProductByIdController = asyncHandler(async (req: Request, res: Response) => {});
 
