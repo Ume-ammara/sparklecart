@@ -7,6 +7,7 @@ export interface IProduct {
   category: mongoose.Types.ObjectId;
   quantity: number;
   images: string[];
+  seller: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -42,6 +43,11 @@ const productSchema: Schema<IProduct> = new Schema(
         required: true,
       },
     ],
+    seller: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Seller",
+      required: true,
+    },
   },
   { timestamps: true }
 );

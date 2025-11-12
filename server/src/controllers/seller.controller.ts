@@ -3,7 +3,6 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { becomeASellerService, createProductService } from "../services/seller.service.js";
 import { becomeAsellerSchema, createProductSchema } from "../schemas/seller.schema.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { ApiError } from "../utils/ApiError.js";
 
 export const becomeASellerController = asyncHandler(async (req: Request, res: Response) => {
   const { data } = becomeAsellerSchema.safeParse({ ...req.body, userId: req.user?._id });

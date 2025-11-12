@@ -44,7 +44,8 @@ export const createProductService = async ({
   images,
   userId,
 }: CreateProductDTO) => {
-  const seller = await Seller.findById(userId);
+  
+  const seller = await Seller.findOne({ user: userId });
 
   if (!seller) {
     throw new ApiError(401, "You are not registered as a seller");
@@ -57,6 +58,7 @@ export const createProductService = async ({
     quantity,
     category,
     images,
+    seller: seller._id,
   });
 
   console.log("product", createProduct);

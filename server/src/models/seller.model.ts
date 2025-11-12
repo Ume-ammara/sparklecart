@@ -23,7 +23,6 @@ const sellerSchema: Schema<ISeller> = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
     },
   },
   { timestamps: true }
