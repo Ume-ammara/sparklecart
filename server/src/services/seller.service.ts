@@ -6,6 +6,7 @@ import { BecomeASellerDTO, CreateProductDTO } from "../schemas/seller.schema.js"
 import { ApiError } from "../utils/ApiError.js";
 import { logger } from "../utils/logger.js";
 import { Product } from "../models/product.model.js";
+import { Category } from "../models/category.model.js";
 
 export const becomeASellerService = async ({ name, description, userId }: BecomeASellerDTO) => {
   logger.info(`Create seller store service called for user: ${userId}`);
@@ -44,19 +45,20 @@ export const createProductService = async ({
   images,
   userId,
 }: CreateProductDTO) => {
-  
   const seller = await Seller.findOne({ user: userId });
 
   if (!seller) {
     throw new ApiError(401, "You are not registered as a seller");
   }
-
+  const productCategory = await Category.create({
+    name,
+  });
   const createProduct = await Product.create({
     name,
     description,
     price,
     quantity,
-    category,
+    category: productCategory._id,
     images,
     seller: seller._id,
   });
@@ -66,6 +68,14 @@ export const createProductService = async ({
   return createProduct;
 };
 
-export const getAllSellerProductsService = async (userId: string) => {};
+export const getAllSellerProductsService = async (userId: string) => {
+  const seller = await Seller.findOne({ user: userId });
+  if (!seller) {
+    throw new ApiError(401, "unauthorized request");
+  }
+
+  const products = await Product.find();
+  return products;
+};
 
 export const deleteAllSellerProductsService = async (userId: string) => {};

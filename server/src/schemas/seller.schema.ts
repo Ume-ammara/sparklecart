@@ -27,5 +27,10 @@ export const createProductSchema = z.object({
   userId: z.string().nonempty("User id is required"),
 });
 
+export const getAllProductsSchema = z.object({
+  userId: z.string().nonempty("Product id is required"),
+});
+
 export type BecomeASellerDTO = z.infer<typeof becomeAsellerSchema>;
 export type CreateProductDTO = z.infer<typeof createProductSchema>;
+export type getAllProductsDTO = z.infer<typeof getAllProductsSchema>;
