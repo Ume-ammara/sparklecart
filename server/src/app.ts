@@ -26,12 +26,13 @@ import { healthRouter } from "./routes/health.route.js";
 import { connectDB } from "./db/connection.db.js";
 import { authRouter } from "./routes/auth.route.js";
 import { sellerRouter } from "./routes/seller.route.js";
+import { productRouter } from "./routes/product.route.js";
 
 // Using all routes here
 app.use("/api/v1/health", healthRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/seller", sellerRouter);
-
+app.use("/api/v1/products", productRouter);
 
 // Error handling middleware
 import { errorHandler } from "./middlewares/error.middleware.js";

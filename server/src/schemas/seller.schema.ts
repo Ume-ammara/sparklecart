@@ -24,6 +24,7 @@ export const createProductSchema = z.object({
     .array(z.string().nonempty("Image URL cannot be empty"))
     .min(1, "At least one image is required")
     .optional(),
+  brand: z.string().min(2).max(50).optional(),
   userId: z.string().nonempty("User id is required"),
 });
 

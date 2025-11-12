@@ -8,6 +8,7 @@ import { logger } from "../utils/logger.js";
 import { Product } from "../models/product.model.js";
 import { Category } from "../models/category.model.js";
 import { cookieOptions } from "../config/cookie.config.js";
+import { Brand } from "../models/brand.model.js";
 
 export const becomeASellerService = async ({ name, description, userId }: BecomeASellerDTO) => {
   logger.info(`Create seller store service called for user: ${userId}`);
@@ -50,6 +51,7 @@ export const createProductService = async ({
   quantity,
   category,
   images,
+  brand,
   userId,
 }: CreateProductDTO) => {
   const seller = await Seller.findOne({ user: userId });
@@ -57,9 +59,19 @@ export const createProductService = async ({
   if (!seller) {
     throw new ApiError(401, "You are not registered as a seller");
   }
-  const productCategory = await Category.create({
-    name,
-  });
+
+  let productCategory = await Category.findOne({ name: category });
+
+  if (!productCategory) {
+    productCategory = await Category.create({ name: category });
+  }
+
+  let productBrand = await Brand.findOne({ name: brand });
+
+  if (!productBrand) {
+    productBrand = await Brand.create({ name: brand });
+  }
+
   const createProduct = await Product.create({
     name,
     description,
@@ -67,6 +79,7 @@ export const createProductService = async ({
     quantity,
     category: productCategory._id,
     images,
+    brand: productBrand._id,
     seller: seller._id,
   });
 
