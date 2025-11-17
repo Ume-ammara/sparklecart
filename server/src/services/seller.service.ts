@@ -2,7 +2,11 @@ import { Seller } from "../models/seller.model.js";
 import { User } from "../models/user.model.js";
 import { USER_ROLES } from "../constants/user.constant.js";
 
-import { BecomeASellerDTO, CreateProductDTO } from "../schemas/seller.schema.js";
+import {
+  BecomeASellerDTO,
+  CreateProductDTO,
+  updateAllProductsDTO,
+} from "../schemas/seller.schema.js";
 import { ApiError } from "../utils/ApiError.js";
 import { logger } from "../utils/logger.js";
 import { Product } from "../models/product.model.js";
@@ -66,10 +70,10 @@ export const createProductService = async ({
     productCategory = await Category.create({ name: category });
   }
 
-  let productBrand = await Brand.findOne({ name: brand });
+  let productBrand = await Brand.findOne({ name: brand.name });
 
   if (!productBrand) {
-    productBrand = await Brand.create({ name: brand });
+    productBrand = await Brand.create(brand);
   }
 
   const createProduct = await Product.create({
@@ -95,4 +99,41 @@ export const getAllSellerProductsService = async (userId: string) => {
 
 export const deleteAllSellerProductsService = async (userId: string, sellerId: string) => {
   await Product.deleteMany({ seller: sellerId });
+};
+
+export const updateAllProductsService = async ({
+  name,
+  description,
+  price,
+  quantity,
+  category,
+  images,
+  userId,
+}: updateAllProductsDTO) => {
+  const seller = await Seller.findOne({ user: userId });
+
+  if (!seller) {
+    throw new ApiError(401, "You are not registered as a seller");
+  }
+  let productCategory = await Category.findOne({ name: category });
+
+  if (!productCategory) {
+    productCategory = await Category.create({ name: category });
+  }
+
+  const updateProducts = await Product.updateMany(
+    { seller: seller._id },
+    {
+      $set: {
+        name,
+        description,
+        price,
+        quantity,
+        category: productCategory,
+        images,
+      },
+    }
+  );
+
+  return updateProducts;
 };

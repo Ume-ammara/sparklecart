@@ -4,15 +4,7 @@ export interface IBrand {
   _id: mongoose.Types.ObjectId;
   name: string;
   description: string;
-  socialMediaLinks: {
-    facebook?: string;
-    twitter?: string;
-    instagram?: string;
-    linkedin?: string;
-    website?: string;
-  };
   country: string;
-  established: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -28,31 +20,15 @@ const brandSchema = new Schema<IBrand>(
       type: String,
       required: true,
     },
-    socialMediaLinks: {
-      facebook: {
-        type: String,
-      },
-      twitter: {
-        type: String,
-      },
-      instagram: {
-        type: String,
-      },
-      linkedin: {
-        type: String,
-      },
-      website: {
-        type: String,
-      },
-    },
+
     country: {
       type: String,
       required: true,
     },
-    established: {
-      type: Number,
-      required: true,
-    },
+    // established: {
+    //   type: Number,
+    //   required: true,
+    // },
   },
   { timestamps: true }
 );
