@@ -180,3 +180,12 @@ export const updateProductByIdService = async (
   }
   return updateProduct;
 };
+
+export const deleteProductByIdService = async (sellerId: string, productId: string) => {
+  const seller = await Seller.findById(sellerId);
+  if (!seller) {
+    throw new ApiError(404, "Seller not found");
+  }
+
+  await Product.findByIdAndDelete(productId);
+};

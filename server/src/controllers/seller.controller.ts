@@ -4,6 +4,7 @@ import {
   becomeASellerService,
   createProductService,
   deleteAllSellerProductsService,
+  deleteProductByIdService,
   getAllSellerProductsService,
   getProductByIdService,
   updateAllProductsService,
@@ -81,4 +82,10 @@ export const updateProductByIdController = asyncHandler(async (req: Request, res
   res.status(200).json(new ApiResponse(200, "Product updated successfully", { product }));
 });
 
-export const deleteProductByIdController = asyncHandler(async (req: Request, res: Response) => {});
+export const deleteProductByIdController = asyncHandler(async (req: Request, res: Response) => {
+  const sellerId = req.user.sellerId;
+  const productId = req.params.id;
+  await deleteProductByIdService(sellerId, productId);
+
+  res.status(200).json(new ApiResponse(200, "Product deleted successfully"));
+});
