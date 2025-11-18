@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface ISession {
+  _id: mongoose.Types.ObjectId;
   user: mongoose.Types.ObjectId;
   refreshToken: string;
   ipAddress?: string;

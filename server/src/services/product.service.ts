@@ -35,3 +35,7 @@ export const getAllProductsService = async (query: ProductQueryParamsDTO) => {
 
   return products;
 };
+
+export const getProductBySlugService = async (slug: string) => {};
+
+export const getAllProductsByBrandService = async (slug: string) => {};

@@ -1,6 +1,8 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface IProduct {
+  _id: mongoose.Types.ObjectId;
+  slug: string;
   name: string;
   description: string;
   price: number;
@@ -16,6 +18,13 @@ export interface IProduct {
 
 const productSchema: Schema<IProduct> = new Schema(
   {
+    slug: {
+      type: String,
+      trim: true,
+      required: true,
+      unique: true,
+      lowercase: true,
+    },
     name: {
       type: String,
       required: true,

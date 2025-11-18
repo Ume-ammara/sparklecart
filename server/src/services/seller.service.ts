@@ -50,6 +50,7 @@ export const becomeASellerService = async ({ name, description, userId }: Become
 };
 
 export const createProductService = async ({
+  slug,
   name,
   description,
   price,
@@ -59,10 +60,19 @@ export const createProductService = async ({
   brand,
   userId,
 }: CreateProductDTO) => {
+  logger.info(`Checking seller store for user: ${userId}`);
+
   const seller = await Seller.findOne({ user: userId });
 
   if (!seller) {
+    logger.error(`No seller store found for user: ${userId}`);
     throw new ApiError(401, "You are not registered as a seller");
+  }
+
+  const slugExists = await Product.findOne({ slug });
+
+  if (slugExists) {
+    throw new ApiError(409, "Product with this slug already exists");
   }
 
   let productCategory = await Category.findOne({ name: category });
@@ -71,13 +81,14 @@ export const createProductService = async ({
     productCategory = await Category.create({ name: category });
   }
 
-  let productBrand = await Brand.findOne({ name: brand.name });
+  let productBrand = await Brand.findOne({ name: brand.slug });
 
   if (!productBrand) {
     productBrand = await Brand.create(brand);
   }
 
   const createProduct = await Product.create({
+    slug,
     name,
     description,
     price,
@@ -88,21 +99,39 @@ export const createProductService = async ({
     seller: seller._id,
   });
 
-  console.log("product", createProduct);
+  logger.info(`Product created successfully for seller: ${seller._id}`);
 
   return createProduct;
 };
 
 export const getAllSellerProductsService = async (userId: string) => {
-  const products = await Product.find();
+  const seller = await Seller.findOne({ user: userId });
+
+  if (!seller) {
+    throw new ApiError(401, "You are not registered as a seller");
+  }
+
+  const products = await Product.find({ seller: seller._id });
+
+  logger.info(`Fetched products for seller: ${seller._id}`);
   return products;
 };
 
 export const deleteAllSellerProductsService = async (userId: string, sellerId: string) => {
+  logger.info(`Deleting all products for seller: ${sellerId}`);
+  const seller = await Seller.findOne({ user: userId });
+
+  if (!seller) {
+    logger.error(`No seller store found for user: ${userId}`);
+    throw new ApiError(401, "You are not registered as a seller");
+  }
+
   await Product.deleteMany({ seller: sellerId });
+  logger.info(`All products deleted for seller: ${sellerId}`);
 };
 
 export const updateAllProductsService = async ({
+  slug,
   name,
   description,
   price,
@@ -111,11 +140,21 @@ export const updateAllProductsService = async ({
   images,
   userId,
 }: updateAllProductsDTO) => {
+  logger.info(`Updating all products for seller with user: ${userId}`);
   const seller = await Seller.findOne({ user: userId });
 
   if (!seller) {
+    logger.error(`No seller store found for user: ${userId}`);
     throw new ApiError(401, "You are not registered as a seller");
   }
+
+  const slugExists = await Product.findOne({ slug });
+
+  if (slugExists) {
+    logger.error(`Product slug conflict for seller with user: ${userId}`);
+    throw new ApiError(409, "Product with this slug already exists");
+  }
+
   let productCategory = await Category.findOne({ name: category });
 
   if (!productCategory) {
@@ -126,6 +165,7 @@ export const updateAllProductsService = async ({
     { seller: seller._id },
     {
       $set: {
+        slug,
         name,
         description,
         price,
@@ -135,6 +175,7 @@ export const updateAllProductsService = async ({
       },
     }
   );
+  logger.info(`All products updated for seller with user: ${userId}`);
 
   return updateProducts;
 };
@@ -182,10 +223,15 @@ export const updateProductByIdService = async (
 };
 
 export const deleteProductByIdService = async (sellerId: string, productId: string) => {
+  logger.info(`Deleting product: ${productId} for seller: ${sellerId}`);
   const seller = await Seller.findById(sellerId);
+
   if (!seller) {
+    logger.error(`No seller store found for seller: ${sellerId}`);
     throw new ApiError(404, "Seller not found");
   }
 
   await Product.findByIdAndDelete(productId);
+
+  logger.info(`Product: ${productId} deleted successfully for seller: ${sellerId}`);
 };

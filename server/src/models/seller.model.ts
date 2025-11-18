@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface ISeller {
+  _id: mongoose.Types.ObjectId;
   name: string;
   description: string;
   user: mongoose.Types.ObjectId;

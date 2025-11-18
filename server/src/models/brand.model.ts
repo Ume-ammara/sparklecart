@@ -2,6 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 export interface IBrand {
   _id: mongoose.Types.ObjectId;
+  slug: string;
   name: string;
   description: string;
   country: string;
@@ -11,10 +12,17 @@ export interface IBrand {
 
 const brandSchema = new Schema<IBrand>(
   {
-    name: {
+    slug: {
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    name: {
+      type: String,
+      required: true,
+      trim: true,
     },
     description: {
       type: String,
@@ -25,10 +33,6 @@ const brandSchema = new Schema<IBrand>(
       type: String,
       required: true,
     },
-    // established: {
-    //   type: Number,
-    //   required: true,
-    // },
   },
   { timestamps: true }
 );

@@ -17,3 +17,9 @@ export const getAllProductsController = asyncHandler(async (req: Request, res: R
 
   res.status(200).json(new ApiResponse(200, "Products fetched successfully", { products }));
 });
+
+export const getProductBySlugController = asyncHandler(async (req: Request, res: Response) => {});
+
+export const getAllProductsByBrandController = asyncHandler(
+  async (req: Request, res: Response) => {}
+);

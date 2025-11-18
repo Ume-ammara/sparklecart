@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface IAddress {
+  _id: mongoose.Types.ObjectId;
   street: string;
   city: string;
   state: string;

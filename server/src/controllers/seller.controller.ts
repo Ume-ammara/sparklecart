@@ -32,7 +32,7 @@ export const becomeASellerController = asyncHandler(async (req: Request, res: Re
 });
 
 export const createProductController = asyncHandler(async (req: Request, res: Response) => {
-  console.log("create products", req.body);
+
   const { data } = createProductSchema.safeParse({ ...req.body, userId: req.user?._id });
 
   const product = await createProductService(data);
