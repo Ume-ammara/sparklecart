@@ -137,3 +137,8 @@ export const updateAllProductsService = async ({
 
   return updateProducts;
 };
+
+export const getProductByIdService = async (productId: string) => {
+  const product = await Product.findById(productId);
+  return product;
+};
