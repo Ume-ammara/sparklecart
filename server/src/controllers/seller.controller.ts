@@ -7,11 +7,13 @@ import {
   getAllSellerProductsService,
   getProductByIdService,
   updateAllProductsService,
+  updateProductByIdService,
 } from "../services/seller.service.js";
 import {
   becomeAsellerSchema,
   createProductSchema,
   updateAllProductsSchema,
+  updateProductByIdSchema,
 } from "../schemas/seller.schema.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
@@ -62,11 +64,21 @@ export const updateAllProductsController = asyncHandler(async (req: Request, res
 
   res.status(200).json(new ApiResponse(200, "Products update successfully", { updateProducts }));
 });
+
 export const getProductByIdController = asyncHandler(async (req: Request, res: Response) => {
   const productId = req.params.id;
   const product = await getProductByIdService(productId);
   res.status(200).json(new ApiResponse(200, "Product fetched successfully", { product }));
 });
-export const updateProductByIdController = asyncHandler(async (req: Request, res: Response) => {});
+
+export const updateProductByIdController = asyncHandler(async (req: Request, res: Response) => {
+  const { data } = updateProductByIdSchema.safeParse({
+    ...req.body,
+    userId: req.user._id,
+  });
+  const productId = req.params.id;
+  const product = await updateProductByIdService(data, productId);
+  res.status(200).json(new ApiResponse(200, "Product updated successfully", { product }));
+});
 
 export const deleteProductByIdController = asyncHandler(async (req: Request, res: Response) => {});

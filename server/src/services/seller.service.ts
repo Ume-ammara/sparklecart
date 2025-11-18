@@ -6,6 +6,7 @@ import {
   BecomeASellerDTO,
   CreateProductDTO,
   updateAllProductsDTO,
+  updateProductDTO,
 } from "../schemas/seller.schema.js";
 import { ApiError } from "../utils/ApiError.js";
 import { logger } from "../utils/logger.js";
@@ -140,5 +141,42 @@ export const updateAllProductsService = async ({
 
 export const getProductByIdService = async (productId: string) => {
   const product = await Product.findById(productId);
+  if (!product) {
+    throw new ApiError(404, "Product not found");
+  }
   return product;
+};
+
+export const updateProductByIdService = async (
+  { name, description, price, quantity, category, images, userId }: updateProductDTO,
+  productId: string
+) => {
+  const seller = await Seller.findOne({ user: userId });
+
+  if (!seller) {
+    throw new ApiError(401, "You are not registered as a seller");
+  }
+  let productCategory = await Category.findOne({ name: category });
+
+  if (!productCategory) {
+    productCategory = await Category.create({ name: category });
+  }
+
+  const updateProduct = await Product.findByIdAndUpdate(
+    productId,
+    {
+      name,
+      description,
+      price,
+      quantity,
+      category: productCategory,
+      images,
+    },
+    { new: true }
+  );
+
+  if (!updateProduct) {
+    throw new ApiError(404, "Product not found");
+  }
+  return updateProduct;
 };
