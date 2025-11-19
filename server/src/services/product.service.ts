@@ -2,6 +2,7 @@ import { Brand } from "../models/brand.model.js";
 import { Category } from "../models/category.model.js";
 import { Product } from "../models/product.model.js";
 import { ProductQueryParamsDTO } from "../schemas/product.schema.js";
+import { ApiError } from "../utils/ApiError.js";
 
 export const getAllProductsService = async (query: ProductQueryParamsDTO) => {
   const mongoQuery: any = {};
@@ -36,6 +37,22 @@ export const getAllProductsService = async (query: ProductQueryParamsDTO) => {
   return products;
 };
 
-export const getProductBySlugService = async (slug: string) => {};
+export const getProductBySlugService = async (slug: string) => {
+  const product = await Product.findOne({ slug });
+  if (!product) {
+    throw new ApiError(403, "Product not found");
+  }
+  return product;
+};
 
-export const getAllProductsByBrandService = async (slug: string) => {};
+export const getAllProductsByBrandService = async (slug: string) => {
+  const brand = await Brand.findOne({ slug });
+  if (!brand) {
+    throw new ApiError(403, "Brand not found");
+  }
+  const products = await Product.find({ brand: brand._id });
+  if (!products) {
+    throw new ApiError(403, "Product not found");
+  }
+  return products;
+};

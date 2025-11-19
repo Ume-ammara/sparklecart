@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { getAllProductsService } from "../services/product.service.js";
+import {
+  getAllProductsByBrandService,
+  getAllProductsService,
+  getProductBySlugService,
+} from "../services/product.service.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { productQuerySchema } from "../schemas/product.schema.js";
 
@@ -18,8 +22,14 @@ export const getAllProductsController = asyncHandler(async (req: Request, res: R
   res.status(200).json(new ApiResponse(200, "Products fetched successfully", { products }));
 });
 
-export const getProductBySlugController = asyncHandler(async (req: Request, res: Response) => {});
+export const getProductBySlugController = asyncHandler(async (req: Request, res: Response) => {
+  const { slug } = req.params;
+  const product = await getProductBySlugService(slug);
+  res.status(200).json(new ApiResponse(200, "Product fetched successfully", { product }));
+});
 
-export const getAllProductsByBrandController = asyncHandler(
-  async (req: Request, res: Response) => {}
-);
+export const getAllProductsByBrandController = asyncHandler(async (req: Request, res: Response) => {
+  const { slug } = req.params;
+  const products = await getAllProductsByBrandService(slug);
+  res.status(200).json(new ApiResponse(200, "Product fetched successfully", { products }));
+});
