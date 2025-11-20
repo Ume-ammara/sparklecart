@@ -1,12 +1,14 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { env } from "./config/env.config.js";
+import { connectDB } from "./db/connection.db.js";
 
 const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: env.FRONTEND_URL,
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
@@ -26,11 +28,12 @@ connectDB();
 
 // Importing all routes here
 import { healthRouter } from "./routes/health.route.js";
-import { connectDB } from "./db/connection.db.js";
 import { authRouter } from "./routes/auth.route.js";
 import { userRouter } from "./routes/user.route.js";
 import { sellerRouter } from "./routes/seller.route.js";
 import { productRouter } from "./routes/product.route.js";
+import { wishlistRouter } from "./routes/wishlist.route.js";
+import { cartRouter } from "./routes/cart.route.js";
 
 // Using all routes here
 app.use("/api/v1/health", healthRouter);
@@ -39,10 +42,10 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/seller", sellerRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/wishlists", wishlistRouter);
+app.use("/api/v1/carts", cartRouter);
 
 // Error handling middleware
 import { errorHandler } from "./middlewares/error.middleware.js";
-import { wishlistRouter } from "./routes/wishlist.route.js";
 app.use(errorHandler);
 
 export { app };
