@@ -1,5 +1,8 @@
 import { Router } from "express";
-import { addToWishlistController, removeFromWishlistController } from "../controllers/wishlist.controller.js";
+import {
+  addToWishlistController,
+  removeFromWishlistController,
+} from "../controllers/wishlist.controller.js";
 import { isLoggedIn } from "../middlewares/auth.middleware.js";
 
 const wishlistRouter = Router();

@@ -38,9 +38,11 @@ app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/seller", sellerRouter);
 app.use("/api/v1/products", productRouter);
+app.use("/api/v1/wishlists", wishlistRouter);
 
 // Error handling middleware
 import { errorHandler } from "./middlewares/error.middleware.js";
+import { wishlistRouter } from "./routes/wishlist.route.js";
 app.use(errorHandler);
 
 export { app };
