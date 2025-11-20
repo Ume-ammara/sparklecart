@@ -17,6 +17,7 @@ import { sanitizeUser } from "../utils/sanitize.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { Session } from "../models/session.model.js";
 import { Response } from "express";
+import { Cart } from "../models/cart.model.js";
 
 export const registerService = async ({ fullname, email, password }: RegisterDTO) => {
   logger.info(`Attempt to register user : email - ${email}`);
@@ -104,7 +105,7 @@ export const VerifyEmailService = async ({ token }: VerifyEmailDTO) => {
   user.emailVerificationExpiry = undefined;
 
   const updatedUser = await user.save();
-
+  await Cart.create({ user: user._id });
   logger.info(`Verification Successfull : User verified with email - ${user.email}`);
 
   return sanitizeUser(updatedUser);
