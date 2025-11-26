@@ -1,9 +1,10 @@
 import mongoose, { Schema } from "mongoose";
+import { IProduct } from "./product.model.js";
 
 export interface ICart {
   _id: mongoose.Types.ObjectId;
   user: mongoose.Types.ObjectId;
-  product: mongoose.Types.ObjectId;
+  product: IProduct;
   quantity: number;
   isPurchased: boolean;
   createdAt: Date;

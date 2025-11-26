@@ -43,9 +43,11 @@ app.use("/api/v1/seller", sellerRouter);
 app.use("/api/v1/products", productRouter);
 app.use("/api/v1/wishlists", wishlistRouter);
 app.use("/api/v1/carts", cartRouter);
+app.use("/api/v1/checkouts", checkoutRouter);
 
 // Error handling middleware
 import { errorHandler } from "./middlewares/error.middleware.js";
+import { checkoutRouter } from "./routes/checkout.route.js";
 app.use(errorHandler);
 
 export { app };

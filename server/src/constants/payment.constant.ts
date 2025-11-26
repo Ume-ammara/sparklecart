@@ -9,7 +9,7 @@ export const PaymentStatus = {
 export const PaymentMethods = {
   CARD: "card",
   WALLET: "wallet",
-  UPI: "upi",
+  
 } as const;
 
 export const PAYMENT_STATUS_ENUM = Object.values(PaymentStatus);

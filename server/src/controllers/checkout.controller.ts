@@ -5,7 +5,10 @@ import {
   createCheckoutForBuyNowSchema,
   createCheckoutForCartSchema,
 } from "../schemas/checkout.schema.js";
-import { createCheckoutForBuyNowService, createCheckoutForCartService } from "../services/checkout.service.js";
+import {
+  createCheckoutForBuyNowService,
+  createCheckoutForCartService,
+} from "../services/checkout.service.js";
 
 export const createCheckoutForCartController = asyncHandler(async (req: Request, res: Response) => {
   // When clicked on "Checkout" from cart page then this controller will handle buying all cart items of the user which are not purchased yet means isPurchased: false
@@ -17,7 +20,9 @@ export const createCheckoutForCartController = asyncHandler(async (req: Request,
 
   const paymentIntent = await createCheckoutForCartService(data);
 
-  return res.status(201).json(new ApiResponse(201, "Checkout for cart created successfully", {}));
+  return res
+    .status(201)
+    .json(new ApiResponse(201, "Checkout for cart created successfully", { paymentIntent }));
 });
 
 export const createCheckoutForBuyNowController = asyncHandler(
