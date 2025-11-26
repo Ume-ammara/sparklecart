@@ -38,6 +38,6 @@ export const createCheckoutForBuyNowController = asyncHandler(
 
     return res
       .status(201)
-      .json(new ApiResponse(201, "Checkout for buy now created successfully", {}));
+      .json(new ApiResponse(201, "Checkout for buy now created successfully", { paymentIntent }));
   }
 );

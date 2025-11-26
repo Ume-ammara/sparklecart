@@ -22,6 +22,7 @@ export const isLoggedIn = asyncHandler(async (req: Request, res: Response, next:
     const decode = jwt.verify(token, env.ACCESS_TOKEN_SECRET) as AppUser;
     req.user = decode;
     // console.log("decoded user", decode);
+
     next();
   } catch (error) {
     throw new ApiError(401, error?.message || "Invalid access token", error);
