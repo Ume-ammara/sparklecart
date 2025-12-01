@@ -22,9 +22,9 @@ export interface IOrder {
 
   shippingAddress: mongoose.Types.ObjectId;
 
-  status: string; // pending, processing, shipped...
+  status: string; // pending, processing, shipped
   paymentStatus: string; // unpaid, pending, paid, failed, refunded
-  paymentMethod: string; // card, wallet, upi...
+  paymentMethod: string; // card, wallet
 
   stripePaymentIntentId?: string;
   stripePaymentIntentClientSecret?: string;

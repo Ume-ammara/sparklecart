@@ -34,6 +34,8 @@ import { sellerRouter } from "./routes/seller.route.js";
 import { productRouter } from "./routes/product.route.js";
 import { wishlistRouter } from "./routes/wishlist.route.js";
 import { cartRouter } from "./routes/cart.route.js";
+import { checkoutRouter } from "./routes/checkout.route.js";
+import { webhookRouter } from "./routes/webhook.route.js";
 
 // Using all routes here
 app.use("/api/v1/health", healthRouter);
@@ -44,10 +46,10 @@ app.use("/api/v1/products", productRouter);
 app.use("/api/v1/wishlists", wishlistRouter);
 app.use("/api/v1/carts", cartRouter);
 app.use("/api/v1/checkouts", checkoutRouter);
+app.use("/api/v1/webhook", webhookRouter)
 
 // Error handling middleware
 import { errorHandler } from "./middlewares/error.middleware.js";
-import { checkoutRouter } from "./routes/checkout.route.js";
 app.use(errorHandler);
 
 export { app };
