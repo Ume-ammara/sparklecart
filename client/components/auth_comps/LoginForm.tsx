@@ -16,9 +16,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import Spinner from "../shared/Spinner";
+import { axiosClient } from "@/api/axiosClient";
+import { useAuthStore } from "@/store/authStore";
 
 const LoginForm = () => {
   const [hidePassword, setHidePassword] = useState(true);
+
+  const { loginUser, isLoading, error } = useAuthStore();
 
   const {
     register,
@@ -28,13 +32,7 @@ const LoginForm = () => {
 
   const onSubmit = async (data: LoginFormDTO) => {
     console.log("LOGIN FORM DATA : ", data);
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/login`,
-      {
-        method: "POST",
-        body: JSON.stringify(data),
-      }
-    );
+    await loginUser(data);
   };
 
   return (

@@ -16,13 +16,12 @@ import Spinner from "../shared/Spinner";
 
 import { registerSchema } from "@/schemas/authSchema";
 import type { RegisterFormDTO } from "@/schemas/authSchema";
+import { useAuthStore } from "@/store/authStore";
 
 const RegisterForm = () => {
   const [hidePassword, setHidePassword] = useState(true);
-  const [registerMessage, setRegisterMessage] = useState("");
-  const [otp, setOtp] = useState("");
-  const [otpEmail, setOtpEmail] = useState("");
-  const [otpResult, setOtpResult] = useState("");
+
+  const { registerUser, isLoading, success, error } = useAuthStore();
 
   const {
     register,
@@ -34,26 +33,7 @@ const RegisterForm = () => {
 
   const onSubmit = async (data: RegisterFormDTO) => {
     console.log("REGISTER FORM DATA:", data);
-    setOtpEmail(data.email);
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/register`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }
-    );
-  };
-
-  const handleVerifyOTP = async () => {
-    console.log("VERIFY OTP:", otp, otpEmail);
-  };
-
-  const resetMessages = () => {
-    setOtpResult("");
-    setRegisterMessage("");
+    await registerUser(data);
   };
 
   return (
