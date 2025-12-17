@@ -1,18 +1,8 @@
 import { axiosClient } from "@/api/axiosClient";
 import { LoginFormDTO, RegisterFormDTO } from "@/schemas/authSchema";
+import { UserDTO } from "@/types/userType";
 
 import { create } from "zustand";
-
-interface UserDTO {
-  _id: string;
-  fullname: string;
-  email: string;
-  role: string;
-  isEmailVerified: boolean;
-  lastLogin: string;
-  createdAt: string;
-  updatedAt: string;
-}
 
 type AuthStore = {
   user: UserDTO | null;

@@ -24,7 +24,16 @@ export default function HeroSection() {
           </div>
         </div>
 
-        <div className="relative h-[320px] md:h-[420px] rounded-xl bg-muted" />
+        <Image
+          width={420}
+          height={720}
+          className="relative  rounded-xl bg-muted"
+          src={
+            "https://images.unsplash.com/photo-1765912679250-cea903b4b917?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          }
+          alt="Product Image"
+        />
+        
       </div>
     </section>
   );

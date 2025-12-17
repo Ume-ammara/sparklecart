@@ -1,6 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 const InfoBar = () => {
@@ -13,9 +14,13 @@ const InfoBar = () => {
       <div className="mx-auto flex max-w-7xl items-center justify-center px-4 py-2 text-sm">
         <span>
           Sign up and get 20% off to your first order.&nbsp;
-          <a href="#" className="underline font-medium">
-            Sign Up Now
-          </a>
+          <Link
+            href={"/auth/register"}
+            className="underline font-medium"
+            onClick={() => setVisible(false)}
+          >
+            Register Now
+          </Link>
         </span>
 
         <button
