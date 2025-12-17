@@ -13,6 +13,12 @@ export const loginSchema = z.object({
 });
 
 
+export const newsletterSchema = z.object({
+  email: z.email("Please enter a valid email"),
+});
+
+
 
 export type RegisterFormDTO = z.infer<typeof registerSchema>;
 export type LoginFormDTO = z.infer<typeof loginSchema>;
+export type NewsletterDTO = z.infer<typeof newsletterSchema>;
