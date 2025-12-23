@@ -46,6 +46,7 @@ export const createCheckoutForCartService = async ({
   });
   return session;
 };
+
 export const createCheckoutForBuyNowService = async ({
   name,
   email,
@@ -60,10 +61,11 @@ export const createCheckoutForBuyNowService = async ({
   }
 
   const product = await Product.findById(productId);
+
   if (!product) {
     throw new ApiError(404, "Product not found");
   }
-  console.log("product", product);
+
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     payment_method_types: ["card"],
