@@ -21,6 +21,7 @@ import {
   ShieldCheck,
   LogOut,
 } from "lucide-react";
+import Link from "next/link";
 
 const shortcuts = [
   { label: "My Orders", icon: Package },
@@ -30,13 +31,13 @@ const shortcuts = [
 ];
 
 const additionalActions = [
-  { label: "Sell on SparkleCart", icon: Store },
-  { label: "Your Reviews", icon: Star },
-  { label: "Saved Address", icon: MapPin },
-  { label: "Payment Methods", icon: CreditCard },
-  { label: "Settings", icon: Settings },
-  { label: "Help Center", icon: HelpCircle },
-  { label: "Terms & Conditions", icon: ShieldCheck },
+  { label: "Sell on SparkleCart", icon: Store, href: "/dashboard/seller" },
+  { label: "Your Reviews", icon: Star, href: "" },
+  { label: "Saved Address", icon: MapPin, href: "" },
+  { label: "Payment Methods", icon: CreditCard, href: "" },
+  { label: "Settings", icon: Settings, href: "" },
+  { label: "Help Center", icon: HelpCircle, href: "" },
+  { label: "Terms & Conditions", icon: ShieldCheck, href: "" },
 ];
 
 const Page = () => {
@@ -85,14 +86,19 @@ const Page = () => {
         {/* Actions */}
         <section className="mt-10 border-t pt-6">
           <div className="grid gap-3 sm:grid-cols-2">
-            {additionalActions.map(({ label, icon: Icon }) => (
+            {additionalActions.map(({ label, icon: Icon, href }) => (
               <Button
                 key={label}
                 variant="ghost"
                 className="w-full justify-start gap-3"
               >
-                <Icon className="h-5 w-5 text-muted-foreground" />
-                <span className="text-sm">{label}</span>
+                <Link
+                  href={href}
+                  className="flex justify-start items-center gap-3"
+                >
+                  <Icon className="h-5 w-5 text-muted-foreground" />
+                  <span className="text-sm">{label}</span>
+                </Link>
               </Button>
             ))}
           </div>

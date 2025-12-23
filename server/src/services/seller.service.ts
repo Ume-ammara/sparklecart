@@ -114,7 +114,10 @@ export const getAllSellerProductsService = async (userId: string) => {
     throw new ApiError(401, "You are not registered as a seller");
   }
 
-  const products = await Product.find({ seller: seller._id });
+  const products = await Product.find({ seller: seller._id })
+    .populate("category", "name")
+    .populate("brand", "slug name description country")
+    .populate("seller", "_id name description createdAt updatedAt");
 
   logger.info(`Fetched products for seller: ${seller._id}`);
   return products;
