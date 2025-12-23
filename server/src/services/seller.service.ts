@@ -14,6 +14,7 @@ import { Product } from "../models/product.model.js";
 import { Category } from "../models/category.model.js";
 import { cookieOptions } from "../config/cookie.config.js";
 import { Brand } from "../models/brand.model.js";
+import { uploadOnCloudinary } from "../config/cloudinary.config.js";
 
 export const becomeASellerService = async ({ name, description, userId }: BecomeASellerDTO) => {
   logger.info(`Create seller store service called for user: ${userId}`);
@@ -49,17 +50,10 @@ export const becomeASellerService = async ({ name, description, userId }: Become
   return { user, store, accessToken, accessTokenOptions, refreshToken, refreshTokenOptions };
 };
 
-export const createProductService = async ({
-  slug,
-  name,
-  description,
-  price,
-  quantity,
-  category,
-  images,
-  brand,
-  userId,
-}: CreateProductDTO) => {
+export const createProductService = async (
+  { slug, name, description, price, quantity, category, images, brand, userId }: CreateProductDTO,
+  files: Express.Multer.File[]
+) => {
   logger.info(`Checking seller store for user: ${userId}`);
 
   const seller = await Seller.findOne({ user: userId });
@@ -81,13 +75,13 @@ export const createProductService = async ({
     productCategory = await Category.create({ name: category });
   }
 
-  let productBrand = await Brand.findOne({ name: brand.slug });
+  let productBrand = await Brand.findOne({ slug: brand.slug });
 
   if (!productBrand) {
     productBrand = await Brand.create(brand);
   }
 
-  const createProduct = await Product.create({
+  const product = await Product.create({
     slug,
     name,
     description,
@@ -99,9 +93,18 @@ export const createProductService = async ({
     seller: seller._id,
   });
 
+  let imageUrls = [];
+  for (let img of files) {
+    const url = await uploadOnCloudinary(img.path);
+    imageUrls.push(url);
+  }
+
+  await product.images.push(...imageUrls);
+  await product.save();
+
   logger.info(`Product created successfully for seller: ${seller._id}`);
 
-  return createProduct;
+  return product;
 };
 
 export const getAllSellerProductsService = async (userId: string) => {

@@ -10,6 +10,7 @@ import {
   updateAllProductsController,
   updateProductByIdController,
 } from "../controllers/seller.controller.js";
+import { upload } from "../middlewares/multer.middleware.js";
 
 const sellerRouter = Router();
 
@@ -17,7 +18,7 @@ sellerRouter.route("/").post(isLoggedIn, becomeASellerController);
 sellerRouter
   .route("/products")
   .get(isLoggedIn, isSeller, getAllSellerProductsController)
-  .post(isLoggedIn, isSeller, createProductController)
+  .post(isLoggedIn, isSeller, upload.array("images", 5), createProductController)
   .delete(isLoggedIn, isSeller, deleteAllSellerProductsController)
   .patch(isLoggedIn, isSeller, updateAllProductsController);
 sellerRouter
