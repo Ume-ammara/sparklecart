@@ -31,7 +31,7 @@ axiosClient.interceptors.response.use(
 
       originalRequest._retry = true;
       try {
-        await axiosClient.post("/auth/refresh");
+        await axiosClient.get("/auth/refresh");
         return axiosClient(originalRequest);
       } catch (error) {
         window.location.href = "/auth/login";

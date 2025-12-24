@@ -11,6 +11,7 @@ export const isLoggedIn = asyncHandler(async (req: Request, res: Response, next:
     const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
+      res.clearCookie("accessToken");
       res.clearCookie("refreshToken");
       throw new ApiError(401, "Refresh token expired please login");
     }
