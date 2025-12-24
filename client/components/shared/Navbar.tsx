@@ -72,7 +72,9 @@ const Navbar = () => {
           </button>
 
           <button aria-label="Account">
-            <User className="h-5 w-5" />
+            <Link href={"/dashboard"}>
+              <User className="h-5 w-5" />
+            </Link>
           </button>
         </div>
       </div>

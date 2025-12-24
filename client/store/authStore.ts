@@ -53,7 +53,8 @@ const useAuthStore = create<AuthStore>((set, get) => ({
       const res = await axiosClient.get("/users/profile");
       set({ user: res.data.data?.user });
     } catch (error: any) {
-      set({ error: error });
+      console.log("ERROR IN COUNT :", error);
+      set({ error: error.response.data.message });
     } finally {
       set({ isLoading: false });
     }

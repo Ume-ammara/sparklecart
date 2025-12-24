@@ -11,7 +11,7 @@ export interface IProduct {
   images: string[];
   seller: mongoose.Types.ObjectId;
   inStock: boolean;
-  brand: string;
+  brand: mongoose.Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -64,7 +64,8 @@ const productSchema: Schema<IProduct> = new Schema(
       default: true,
     },
     brand: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Brand",
       required: true,
     },
   },

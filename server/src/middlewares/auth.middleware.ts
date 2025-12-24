@@ -9,11 +9,14 @@ import { logger } from "../utils/logger.js";
 export const isLoggedIn = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
   try {
     const refreshToken = req.cookies.refreshToken;
+
     if (!refreshToken) {
       res.clearCookie("refreshToken");
       throw new ApiError(401, "Refresh token expired please login");
     }
+
     const token = req.cookies?.accessToken || req.header("Authorization")?.split(" ")[1];
+
     if (!token) {
       logger.warn(`Access token is invalid or expired`);
       throw new ApiError(401, "ACCESS_TOKEN_EXPIRED");
@@ -21,7 +24,6 @@ export const isLoggedIn = asyncHandler(async (req: Request, res: Response, next:
 
     const decode = jwt.verify(token, env.ACCESS_TOKEN_SECRET) as AppUser;
     req.user = decode;
-    // console.log("decoded user", decode);
 
     next();
   } catch (error) {

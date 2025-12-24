@@ -105,7 +105,6 @@ export const VerifyEmailService = async ({ token }: VerifyEmailDTO) => {
   user.emailVerificationExpiry = undefined;
 
   const updatedUser = await user.save();
-  await Cart.create({ user: user._id });
   logger.info(`Verification Successfull : User verified with email - ${user.email}`);
 
   return sanitizeUser(updatedUser);

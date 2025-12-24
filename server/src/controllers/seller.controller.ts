@@ -17,6 +17,7 @@ import {
   updateProductByIdSchema,
 } from "../schemas/seller.schema.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { Multer } from "multer";
 
 export const becomeASellerController = asyncHandler(async (req: Request, res: Response) => {
   const { data } = becomeAsellerSchema.safeParse({ ...req.body, userId: req.user?._id });
@@ -32,10 +33,26 @@ export const becomeASellerController = asyncHandler(async (req: Request, res: Re
 });
 
 export const createProductController = asyncHandler(async (req: Request, res: Response) => {
+  const body = {
+    ...req.body,
+    slug: req.body.slug?.trim(),
+    name: req.body.name?.trim(),
+    description: req.body.description?.trim(),
+    category: req.body.category?.trim(),
+    price: Number(req.body.price),
+    quantity: Number(req.body.quantity),
+    brand: {
+      slug: req.body.brand?.slug?.trim(),
+      name: req.body.brand?.name?.trim(),
+      description: req.body.brand?.description?.trim(),
+      country: req.body.brand?.country?.trim(),
+    },
+  };
 
-  const { data } = createProductSchema.safeParse({ ...req.body, userId: req.user?._id });
-
-  const product = await createProductService(data);
+  const files = req.files as Express.Multer.File[];
+  const { data } = createProductSchema.safeParse({ ...body, userId: req.user?._id });
+  console.log("IMAGES : ", files);
+  const product = await createProductService(data, files);
 
   res.status(201).json(new ApiResponse(201, "Product created successfully ", { product }));
 });
