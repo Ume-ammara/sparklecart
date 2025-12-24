@@ -6,7 +6,6 @@ import InfoBar from "@/components/shared/InfoBar";
 import Navbar from "@/components/shared/Navbar";
 import { useEffect } from "react";
 import { useAuthStore } from "@/store/authStore";
-import Spinner from "../shared/Spinner";
 
 export default function LayoutWrapper({
   children,
@@ -15,7 +14,8 @@ export default function LayoutWrapper({
 }) {
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const isSellerDashboard = pathname === "/dashboard/seller";
+  const isSellerDashboard =
+    pathname === "/dashboard/seller" || "/dashboard/seller/product";
 
   const { user, fetchUserProfile } = useAuthStore();
 

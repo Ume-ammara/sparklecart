@@ -1,218 +1,227 @@
 "use client";
 
-import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useMemo } from "react";
+import Image from "next/image";
+
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Spinner from "../shared/Spinner";
 import { productSchema, ProductFormDTO } from "@/schemas/productSchema";
 
-const ProductForm = () => {
+export default function ProductForm() {
   const {
     register,
     handleSubmit,
     control,
-    formState: { errors, isSubmitting, isSubmitted },
+    formState: { errors, isSubmitting },
   } = useForm<ProductFormDTO>({
     resolver: zodResolver(productSchema),
+    defaultValues: {
+      images: [],
+    },
   });
+
+  const images = useWatch({ control, name: "images" });
+
+  const previewUrls = useMemo(() => {
+    if (!images?.length) return [];
+    return images.map((file) => URL.createObjectURL(file));
+  }, [images]);
+
+  useEffect(() => {
+    return () => {
+      previewUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [previewUrls]);
 
   const onSubmit = async (data: ProductFormDTO) => {
     console.log("PRODUCT FORM DATA:", data);
-    // send data to backend
   };
 
   return (
-    <Card className="w-full max-w-7xl overflow-hidden p-0 shadow-lg bg-card    ">
-      <CardContent className="p-6 md:p-8">
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col flex-wrap gap-6"
-        >
-          <div className="text-center space-y-1">
-            <h1 className="text-2xl font-bold">Add New Product</h1>
-            <p className="text-muted-foreground">
-              Fill in the details to create a new product
-            </p>
+    <div className="min-h-screen bg-background text-foreground">
+      {/* HEADER */}
+      <header className="border-b border-border bg-card">
+        <div className="mx-auto max-w-7xl px-6 py-4">
+          <h1 className="text-lg font-semibold">Add New Product</h1>
+        </div>
+      </header>
+
+      {/* CONTENT */}
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mx-auto max-w-7xl px-6 py-6 space-y-6"
+      >
+        {/* PRODUCT DETAILS */}
+        <section className="bg-card border border-border rounded-sm">
+          <div className="border-b border-border px-4 py-3 font-medium">
+            Product Details
           </div>
 
-          {/* Slug */}
-          <div className="grid gap-2">
-            <Label htmlFor="slug">Slug</Label>
-            <Input id="slug" placeholder="product-slug" {...register("slug")} />
-            {errors.slug && (
-              <p className="text-sm text-destructive">{errors.slug.message}</p>
-            )}
-          </div>
+          <div className="p-4 grid grid-cols-4 gap-4">
+            <div className="col-span-2 space-y-1">
+              <Label className="text-sm">Name</Label>
+              <Input {...register("name")} />
+            </div>
 
-          {/* Name */}
-          <div className="grid gap-2">
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" placeholder="Product Name" {...register("name")} />
-            {errors.name && (
-              <p className="text-sm text-destructive">{errors.name.message}</p>
-            )}
-          </div>
-
-          {/* Description */}
-          <div className="grid gap-2">
-            <Label htmlFor="description">Description</Label>
-            <Input
-              id="description"
-              placeholder="Product description"
-              {...register("description")}
-            />
-            {errors.description && (
-              <p className="text-sm text-destructive">
-                {errors.description.message}
-              </p>
-            )}
-          </div>
-
-          {/* Price */}
-          <div className="grid gap-2">
-            <Label htmlFor="price">Price</Label>
-            <Input
-              type="number"
-              step="0.01"
-              id="price"
-              placeholder="0.00"
-              {...register("price", { valueAsNumber: true })}
-            />
-            {errors.price && (
-              <p className="text-sm text-destructive">{errors.price.message}</p>
-            )}
-          </div>
-
-          {/* Quantity */}
-          <div className="grid gap-2">
-            <Label htmlFor="quantity">Quantity</Label>
-            <Input
-              type="number"
-              id="quantity"
-              placeholder="0"
-              {...register("quantity", { valueAsNumber: true })}
-            />
-            {errors.quantity && (
-              <p className="text-sm text-destructive">
-                {errors.quantity.message}
-              </p>
-            )}
-          </div>
-
-          {/* Category */}
-          <div className="grid gap-2">
-            <Label htmlFor="category">Category</Label>
-            <Input
-              id="category"
-              placeholder="category"
-              {...register("category")}
-            />
-            {errors.category && (
-              <p className="text-sm text-destructive">
-                {errors.category.message}
-              </p>
-            )}
-          </div>
-
-          {/* Images */}
-          <div className="grid gap-2">
-            <Label htmlFor="images">Images (comma separated URLs)</Label>
-            <Controller
-              control={control}
-              name="images"
-              render={({ field }) => (
-                <Input
-                  id="images"
-                  placeholder="https://image1.com, https://image2.com"
-                  value={field.value?.join(",") || ""}
-                  onChange={(e) => field.onChange(e.target.value.split(","))}
-                />
-              )}
-            />
-            {errors.images && (
-              <p className="text-sm text-destructive">
-                {errors.images.message}
-              </p>
-            )}
-          </div>
-
-          {/* Brand */}
-          <fieldset className="border p-4 rounded-md">
-            <legend className="text-sm font-semibold mb-2">Brand Info</legend>
-
-            <div className="grid gap-2">
-              <Label htmlFor="brandSlug">Brand Slug</Label>
-              <Input
-                id="brandSlug"
-                placeholder="brand-slug"
-                {...register("brand.slug")}
-              />
-              {errors.brand?.slug && (
-                <p className="text-sm text-destructive">
-                  {errors.brand.slug.message}
+            <div className="col-span-2 space-y-1">
+              <Label className="text-sm">Slug</Label>
+              <Input {...register("slug")} />
+              {errors.slug && (
+                <p className="text-xs text-destructive">
+                  {errors.slug.message}
                 </p>
               )}
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="brandName">Brand Name</Label>
-              <Input
-                id="brandName"
-                placeholder="Brand Name"
-                {...register("brand.name")}
-              />
-              {errors.brand?.name && (
-                <p className="text-sm text-destructive">
-                  {errors.brand.name.message}
-                </p>
-              )}
+            <div className="col-span-4 space-y-1">
+              <Label className="text-sm">Description</Label>
+              <Input {...register("description")} />
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="brandDescription">Brand Description</Label>
+            <div className="col-span-2 space-y-1">
+              <Label className="text-sm">Category</Label>
+              <Input {...register("category")} />
+            </div>
+          </div>
+        </section>
+
+        {/* PRICING */}
+        <section className="bg-card border border-border rounded-sm">
+          <div className="border-b border-border px-4 py-3 font-medium">
+            Pricing & Inventory
+          </div>
+
+          <div className="p-4 grid grid-cols-4 gap-4">
+            <div className="col-span-1 space-y-1">
+              <Label className="text-sm">Price</Label>
               <Input
-                id="brandDescription"
-                placeholder="Brand Description"
-                {...register("brand.description")}
+                type="number"
+                {...register("price", { valueAsNumber: true })}
               />
-              {errors.brand?.description && (
-                <p className="text-sm text-destructive">
-                  {errors.brand.description.message}
-                </p>
-              )}
             </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="brandCountry">Brand Country</Label>
+            <div className="col-span-1 space-y-1">
+              <Label className="text-sm">Quantity</Label>
               <Input
-                id="brandCountry"
-                placeholder="Brand Country"
-                {...register("brand.country")}
+                type="number"
+                {...register("quantity", { valueAsNumber: true })}
               />
-              {errors.brand?.country && (
-                <p className="text-sm text-destructive">
-                  {errors.brand.country.message}
-                </p>
+            </div>
+          </div>
+        </section>
+
+        {/* IMAGES */}
+        <section className="bg-card border border-border rounded-sm">
+          <div className="border-b border-border px-4 py-3 flex items-center justify-between">
+            <span className="font-medium">Product Images</span>
+
+            {!!images?.length && (
+              <span className="text-xs text-muted-foreground">
+                {images.length} image{images.length > 1 ? "s" : ""} selected
+              </span>
+            )}
+          </div>
+
+          <div className="p-4 grid grid-cols-12 gap-4">
+            {/* UPLOAD */}
+            <div className="col-span-4">
+              <Controller
+                name="images"
+                control={control}
+                render={({ field }) => (
+                  <label className="flex h-32 cursor-pointer flex-col items-center justify-center rounded-sm border border-dashed border-border bg-muted text-sm hover:bg-muted/80">
+                    <span className="font-medium">Upload Images</span>
+                    <span className="mt-1 text-xs text-muted-foreground">
+                      JPG, PNG only
+                    </span>
+
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) =>
+                        field.onChange(Array.from(e.target.files || []))
+                      }
+                    />
+                  </label>
+                )}
+              />
+            </div>
+
+            {/* PREVIEW */}
+            <div className="col-span-8">
+              {previewUrls.length ? (
+                <div className="grid grid-cols-4 gap-3">
+                  {previewUrls.map((src, index) => (
+                    <div
+                      key={src}
+                      className="relative h-24 w-full overflow-hidden rounded-sm border border-border bg-muted"
+                    >
+                      <Image
+                        src={src}
+                        alt={`product-${index}`}
+                        fill
+                        sizes="96px"
+                        className="object-cover"
+                        unoptimized
+                      />
+
+                      <span className="absolute bottom-1 right-1 rounded bg-background/80 px-1 text-[10px] text-foreground">
+                        {index + 1}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex h-32 items-center justify-center border border-dashed border-border text-sm text-muted-foreground">
+                  No images uploaded
+                </div>
               )}
             </div>
-          </fieldset>
+          </div>
+        </section>
 
-          {/* Submit */}
-          <Button
-            type="submit"
-            className="w-full mt-2 cursor-pointer bg-secondary text-secondary-foreground hover:bg-secondary/80"
-            disabled={isSubmitting || isSubmitted}
-          >
-            {isSubmitting ? <Spinner /> : "Create Product"}
+        {/* BRAND */}
+        <section className="bg-card border border-border rounded-sm">
+          <div className="border-b border-border px-4 py-3 font-medium">
+            Brand
+          </div>
+
+          <div className="p-4 grid grid-cols-4 gap-4">
+            <div className="col-span-1 space-y-1">
+              <Label className="text-sm">Brand Slug</Label>
+              <Input {...register("brand.slug")} />
+            </div>
+
+            <div className="col-span-1 space-y-1">
+              <Label className="text-sm">Brand Name</Label>
+              <Input {...register("brand.name")} />
+            </div>
+
+            <div className="col-span-1 space-y-1">
+              <Label className="text-sm">Country</Label>
+              <Input {...register("brand.country")} />
+            </div>
+
+            <div className="col-span-4 space-y-1">
+              <Label className="text-sm">Brand Description</Label>
+              <Input {...register("brand.description")} />
+            </div>
+          </div>
+        </section>
+
+        {/* ACTION BAR */}
+        <div className="sticky bottom-0 bg-card border-t border-border px-6 py-4 flex justify-end">
+          <Button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? <Spinner /> : "Save Product"}
           </Button>
-        </form>
-      </CardContent>
-    </Card>
+        </div>
+      </form>
+    </div>
   );
-};
-
-export default ProductForm;
+}
