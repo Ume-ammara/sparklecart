@@ -1,12 +1,14 @@
 "use client";
 
+import ProductForm from "@/components/product_comps/ProductForm";
 import SellerProductTable from "@/components/seller_comps/SellerProductTable";
 import ActionCard from "@/components/shared/ActionCard";
 import Spinner from "@/components/shared/Spinner";
 import { useSellerStore } from "@/store/sellerStore";
 
 import { PlusCircle, Package, Pencil, Trash2 } from "lucide-react";
-import { useEffect } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 const SellerDashboardPage = () => {
   const { sellerProducts, fetchSellerProducts, isLoading } = useSellerStore();
@@ -41,12 +43,13 @@ const SellerDashboardPage = () => {
 
         {/* Quick Actions */}
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <ActionCard
-            title="Create Product"
-            description="Add a new product to your store"
-            icon={PlusCircle}
-            onClick={() => console.log("Create product")}
-          />
+          <Link href={"/dashboard/seller/product"}>
+            <ActionCard
+              title="Create Product"
+              description="Add a new product to your store"
+              icon={PlusCircle}
+            />
+          </Link>
 
           <ActionCard
             title="View Products"

@@ -54,7 +54,12 @@ const useAuthStore = create<AuthStore>((set, get) => ({
       set({ user: res.data.data?.user });
     } catch (error: any) {
       console.log("ERROR IN COUNT :", error);
-      set({ error: error.response.data.message });
+      set({
+        error:
+          error?.response?.data?.message ||
+          error.message ||
+          "Something went wrong",
+      });
     } finally {
       set({ isLoading: false });
     }
