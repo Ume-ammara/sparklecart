@@ -1,7 +1,16 @@
 import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useSellerStore } from "@/store/sellerStore";
 
 const SellerProductTable = () => {
+  const { sellerProducts } = useSellerStore();
+
+  if (!sellerProducts || sellerProducts.length === 0) {
+    return (
+      <div className="text-sm text-muted-foreground">No products found</div>
+    );
+  }
+
   return (
     <div className="rounded-xl border border-border overflow-hidden">
       <div className="grid grid-cols-5 bg-muted px-4 py-3 text-sm font-medium">
@@ -12,15 +21,15 @@ const SellerProductTable = () => {
         <span>Actions</span>
       </div>
 
-      {Array.from({ length: 3 }).map((_, i) => (
+      {sellerProducts.map((product) => (
         <div
-          key={i}
+          key={product._id}
           className="grid grid-cols-5 items-center px-4 py-3 text-sm border-t"
         >
-          <span>Sample Product</span>
-          <span>$120</span>
+          <span>{product.name}</span>
+          <span>${product.price}</span>
           <span className="text-green-600">Active</span>
-          <span>24</span>
+          <span>{product.quantity}</span>
 
           <div className="flex gap-2">
             <Button size="icon" variant="ghost">

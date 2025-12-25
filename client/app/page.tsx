@@ -1,3 +1,4 @@
+import SellerProductCard from "@/components/seller_comps/SellerProductCard";
 import BrandStrip from "@/components/shared/BrandStrip";
 import BrowseByStyle from "@/components/shared/BrowseByStyle";
 import HeroSection from "@/components/shared/HeroSection";
