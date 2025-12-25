@@ -14,6 +14,11 @@ type ProductStore = {
 
   fetchSellerProducts: () => void;
   createProduct: (formData: ProductFormDTO) => void;
+
+  updateProduct: (id: string, data: Partial<ProductFormDTO>) => Promise<void>;
+
+  deleteProduct: (id: string) => Promise<void>;
+  deleteAllProducts: () => Promise<void>;
 };
 
 const useSellerStore = create<ProductStore>((set, get) => ({
@@ -51,6 +56,63 @@ const useSellerStore = create<ProductStore>((set, get) => ({
       });
     } catch (error: any) {
       set({ error: error });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  // UPDATE
+  updateProduct: async (id, updateData) => {
+    try {
+      set({ isLoading: true, error: null });
+
+      const res = await axiosClient.patch(`/seller/products/${id}`, updateData);
+    } catch (err: any) {
+      set({
+        error: err?.response?.data?.message || "Failed to update product",
+      });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  // DELETE ONE
+  deleteProduct: async (id) => {
+    try {
+      set({ isLoading: true, error: null });
+
+      await axiosClient.delete(`/seller/products/${id}`);
+
+      set((state) => ({
+        sellerProducts: state.sellerProducts
+          ? state.sellerProducts.filter((p) => p._id !== id)
+          : [],
+        success: "Product deleted successfully",
+      }));
+    } catch (err: any) {
+      set({
+        error: err?.response?.data?.message || "Failed to delete product",
+      });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  // DELETE ALL
+  deleteAllProducts: async () => {
+    try {
+      set({ isLoading: true, error: null });
+
+      await axiosClient.delete("/seller/products");
+
+      set({
+        sellerProducts: [],
+        success: "All products deleted",
+      });
+    } catch (err: any) {
+      set({
+        error: err?.response?.data?.message || "Failed to delete products",
+      });
     } finally {
       set({ isLoading: false });
     }

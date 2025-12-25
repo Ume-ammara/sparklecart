@@ -14,14 +14,19 @@ import {
 import { Pencil, Trash2 } from "lucide-react";
 
 type Product = {
-  id: string;
+  _id: string;
   name: string;
   price: number;
   quantity: number;
   inStock: boolean;
   images: string[];
-  category: string;
-  brand: string;
+  category: {
+    name: string;
+  };
+  brand: {
+    slug: string;
+    name: string;
+  };
 };
 
 interface SellerProductCardProps {
@@ -66,7 +71,7 @@ const SellerProductCard = ({ product }: SellerProductCardProps) => {
       <CardContent className="p-3 space-y-2">
         {/* BRAND */}
         <p className="text-xs text-muted-foreground truncate">
-          {product.brand}
+          {product.brand.name}
         </p>
 
         {/* NAME */}
@@ -81,7 +86,7 @@ const SellerProductCard = ({ product }: SellerProductCardProps) => {
           </span>
 
           <Badge variant="outline" className="text-[11px]">
-            {product.category}
+            {product.category.name}
           </Badge>
         </div>
 
