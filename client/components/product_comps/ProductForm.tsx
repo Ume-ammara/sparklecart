@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Spinner from "../shared/Spinner";
 import { productSchema, ProductFormDTO } from "@/schemas/productSchema";
+import { useSellerStore } from "@/store/sellerStore";
 
 export default function ProductForm() {
   const {
@@ -37,8 +38,11 @@ export default function ProductForm() {
     };
   }, [previewUrls]);
 
+  const { createProduct, error, isLoading, sellerProducts } = useSellerStore();
+
   const onSubmit = async (data: ProductFormDTO) => {
-    console.log("PRODUCT FORM DATA:", data);
+    console.log("PRODUCT FORM DATA : ", data);
+    await createProduct(data);
   };
 
   return (
@@ -217,8 +221,18 @@ export default function ProductForm() {
 
         {/* ACTION BAR */}
         <div className="sticky bottom-0 bg-card border-t border-border px-6 py-4 flex justify-end">
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? <Spinner /> : "Save Product"}
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className=" cursor-pointer"
+          >
+            {isSubmitting || isLoading ? (
+              <>
+                Saving <Spinner />
+              </>
+            ) : (
+              "Save Product"
+            )}
           </Button>
         </div>
       </form>

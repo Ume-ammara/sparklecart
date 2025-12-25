@@ -9,10 +9,18 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Star } from "lucide-react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../ui/carousel";
 
 interface Product {
-  id: number;
-  title: string;
+  _id: string;
+  name: string;
+  slug: string;
   company: string;
   location: string;
   category: string;
@@ -26,37 +34,55 @@ interface Product {
 
 interface ProductCardProps {
   product: Product;
-  cart: number[];
-  handleAddToCart: (id: number) => void;
+  cart: string[];
+  handleAddToCart: (id: string) => void;
 }
 
 const ProductCard = ({ product, cart, handleAddToCart }: ProductCardProps) => {
-  const isInCart = cart.includes(product.id);
+  const isInCart = cart?.includes(product._id);
+  const hasMultipleImages = product.images.length > 1;
 
   return (
-    <Card className="overflow-hidden transition hover:shadow-lg group border-border">
+    <Card className="overflow-hidden transition hover:shadow-lg group border-border w-full max-w-65 sm:max-w-65">
       <CardHeader className="p-0">
-        <div className="relative w-full h-56 overflow-hidden">
-          <Image
-            src={product.images[0]}
-            alt={product.title}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-          />
-        </div>
+        <Carousel className="relative w-full">
+          <CarouselContent>
+            {product.images.map((img, index) => (
+              <CarouselItem key={index}>
+                <div className="relative h-44 w-full bg-muted">
+                  <Image
+                    src={img}
+                    alt={product.name}
+                    fill
+                    sizes="260px"
+                    className="object-contain p-2"
+                  />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+
+          {/* NAVIGATION ARROWS */}
+          {hasMultipleImages && (
+            <>
+              <CarouselPrevious className="left-1 h-7 w-7 bg-background/80 border border-border shadow-sm hover:bg-background" />
+              <CarouselNext className="right-1 h-7 w-7 bg-background/80 border border-border shadow-sm hover:bg-background" />
+            </>
+          )}
+        </Carousel>
       </CardHeader>
 
       <CardContent className="p-4 space-y-2">
         <div className="flex justify-between items-start">
           <div>
             <h3 className="text-base font-semibold line-clamp-1">
-              {product.title}
+              {product.name}
             </h3>
             <p className="text-xs text-muted-foreground">{product.company}</p>
           </div>
           <div className="flex items-center text-yellow-500 text-xs">
             <Star className="h-4 w-4 fill-yellow-500 mr-1" />
-            {product.rating.toFixed(1)}
+            {product.rating?.toFixed(1)}
           </div>
         </div>
 
@@ -70,7 +96,7 @@ const ProductCard = ({ product, cart, handleAddToCart }: ProductCardProps) => {
 
       <CardFooter className="p-4 pt-0">
         <Button
-          onClick={() => handleAddToCart(product.id)}
+          onClick={() => handleAddToCart(product._id)}
           variant={isInCart ? "secondary" : "default"}
           className="w-full"
         >
