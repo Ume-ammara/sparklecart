@@ -13,6 +13,7 @@ type ProductStore = {
   success: string | null;
 
   fetchSellerProducts: () => void;
+  fetchSellerProductById: (productId: string) => void;
   createProduct: (formData: ProductFormDTO) => void;
 
   updateProduct: (id: string, data: Partial<ProductFormDTO>) => Promise<void>;
@@ -35,6 +36,21 @@ const useSellerStore = create<ProductStore>((set, get) => ({
       set({
         success: res.data.data.message,
         sellerProducts: res.data.data.products,
+      });
+    } catch (error: any) {
+      set({ error: error });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  fetchSellerProductById: async (productId) => {
+    try {
+      set({ isLoading: true, error: null, success: null });
+      const res = await axiosClient.get(`/seller/products/${productId}`);
+      set({
+        success: res.data.data.message,
+        sellerProduct: res.data.data.product,
       });
     } catch (error: any) {
       set({ error: error });

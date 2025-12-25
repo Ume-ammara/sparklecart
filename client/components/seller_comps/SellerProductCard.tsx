@@ -12,9 +12,11 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
 
 type Product = {
   _id: string;
+  slug: string
   name: string;
   price: number;
   quantity: number;
@@ -71,7 +73,7 @@ const SellerProductCard = ({ product }: SellerProductCardProps) => {
       <CardContent className="p-3 space-y-2">
         {/* BRAND */}
         <p className="text-xs text-muted-foreground truncate">
-          {product.brand.name}
+          <Link href={`/dashboard/seller/product/${product._id}`}>{product.brand.name}</Link>
         </p>
 
         {/* NAME */}

@@ -187,7 +187,11 @@ export const updateAllProductsService = async ({
 };
 
 export const getProductByIdService = async (productId: string) => {
-  const product = await Product.findById(productId);
+  const product = await Product.findById(productId)
+    .populate("category", "name")
+    .populate("brand", "slug name description country")
+    .populate("seller", "_id name description createdAt updatedAt");
+
   if (!product) {
     throw new ApiError(404, "Product not found");
   }
