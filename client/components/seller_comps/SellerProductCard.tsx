@@ -16,11 +16,10 @@ import Link from "next/link";
 
 type Product = {
   _id: string;
-  slug: string
+  slug: string;
   name: string;
   price: number;
   quantity: number;
-  inStock: boolean;
   images: string[];
   category: {
     name: string;
@@ -73,7 +72,9 @@ const SellerProductCard = ({ product }: SellerProductCardProps) => {
       <CardContent className="p-3 space-y-2">
         {/* BRAND */}
         <p className="text-xs text-muted-foreground truncate">
-          <Link href={`/dashboard/seller/product/${product._id}`}>{product.brand.name}</Link>
+          <Link href={`/dashboard/seller/product/${product._id}`}>
+            {product.brand.name}
+          </Link>
         </p>
 
         {/* NAME */}
@@ -99,9 +100,11 @@ const SellerProductCard = ({ product }: SellerProductCardProps) => {
           </span>
 
           <span
-            className={product.inStock ? "text-green-600" : "text-destructive"}
+            className={
+              product.quantity > 0 ? "text-green-600" : "text-destructive"
+            }
           >
-            {product.inStock ? "In stock" : "Out of stock"}
+            {product.quantity > 0 ? "In stock" : "Out of stock"}
           </span>
         </div>
       </CardContent>

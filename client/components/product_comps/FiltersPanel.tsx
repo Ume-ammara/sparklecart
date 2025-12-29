@@ -5,16 +5,17 @@ import { Separator } from "@/components/ui/separator";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Star } from "lucide-react";
+import { BrandDTO, CategoryDTO } from "@/types/productType";
 
 interface FiltersPanelProps {
   priceRange: [number, number];
   setPriceRange: (range: [number, number]) => void;
-  companies: string[];
-  selectedCompanies: string[];
-  setSelectedCompanies: (value: string[]) => void;
-  categories: string[];
-  selectedCategories: string[];
-  setSelectedCategories: (value: string[]) => void;
+  brands: BrandDTO[];
+  selectedBrands: BrandDTO[];
+  setSelectedBrands: (value: BrandDTO[]) => void;
+  categories: CategoryDTO[];
+  selectedCategories: CategoryDTO[];
+  setSelectedCategories: (value: CategoryDTO[]) => void;
   genders: string[];
   selectedGender: string[];
   setSelectedGender: (value: string[]) => void;
@@ -26,9 +27,9 @@ interface FiltersPanelProps {
 const FiltersPanel = ({
   priceRange,
   setPriceRange,
-  companies,
-  selectedCompanies,
-  setSelectedCompanies,
+  brands,
+  selectedBrands,
+  setSelectedBrands,
   categories,
   selectedCategories,
   setSelectedCategories,
@@ -39,6 +40,7 @@ const FiltersPanel = ({
   setSelectedRating,
   resetFilters,
 }: FiltersPanelProps) => {
+  console.log("CATEGORIES ITEMS : ", categories);
   return (
     <div className="space-y-8 px-4 py-6 text-sm overflow-y-auto max-h-[calc(100vh-64px)]">
       {/* PRICE */}
@@ -52,34 +54,42 @@ const FiltersPanel = ({
           value={priceRange}
           onValueChange={(v: number[]) => setPriceRange(v as [number, number])}
           min={0}
-          max={2000}
+          max={20000}
           step={50}
         />
       </div>
 
       <Separator />
 
-      {/* COMPANY */}
+      {/* BRANDS FILTER */}
       <div className="space-y-3">
         <Label className="text-base font-semibold">Company</Label>
         <div className="flex flex-wrap gap-2">
-          {companies.map((company) => (
+          {brands?.map((brand) => (
             <Button
-              key={company}
+              key={typeof brand === "string" ? brand : brand._id}
               variant={
-                selectedCompanies.includes(company) ? "default" : "outline"
+                selectedBrands.some(
+                  (b) => typeof b !== "string" && b._id === brand._id
+                )
+                  ? "default"
+                  : "outline"
               }
               size="sm"
               className="rounded-full text-xs"
               onClick={() =>
-                setSelectedCompanies(
-                  selectedCompanies.includes(company)
-                    ? selectedCompanies.filter((c) => c !== company)
-                    : [...selectedCompanies, company]
+                setSelectedBrands(
+                  selectedBrands.some(
+                    (b) => typeof b !== "string" && b._id === brand._id
+                  )
+                    ? selectedBrands.filter(
+                        (b) => typeof b !== "string" && b._id !== brand._id
+                      )
+                    : [...selectedBrands, brand]
                 )
               }
             >
-              {company}
+              {typeof brand === "string" ? brand : brand.name}
             </Button>
           ))}
         </div>
@@ -91,25 +101,32 @@ const FiltersPanel = ({
       <div className="space-y-3">
         <Label className="text-base font-semibold">Category</Label>
         <div className="flex flex-wrap gap-2">
-          {categories.map((category) => (
-            <Button
-              key={category}
-              variant={
-                selectedCategories.includes(category) ? "default" : "outline"
-              }
-              size="sm"
-              className="rounded-full text-xs"
-              onClick={() =>
-                setSelectedCategories(
-                  selectedCategories.includes(category)
-                    ? selectedCategories.filter((c) => c !== category)
-                    : [...selectedCategories, category]
-                )
-              }
-            >
-              {category}
-            </Button>
-          ))}
+          {categories?.map(
+            (category) =>
+              category && (
+                <Button
+                  key={category._id}
+                  variant={
+                    selectedCategories.some((c) => c._id === category._id)
+                      ? "default"
+                      : "outline"
+                  }
+                  size="sm"
+                  className="rounded-full text-xs"
+                  onClick={() =>
+                    setSelectedCategories(
+                      selectedCategories.some((c) => c._id === category._id)
+                        ? selectedCategories.filter(
+                            (c) => c._id !== category._id
+                          )
+                        : [...selectedCategories, category]
+                    )
+                  }
+                >
+                  {category.name}
+                </Button>
+              )
+          )}
         </div>
       </div>
 

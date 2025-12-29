@@ -32,7 +32,13 @@ export const getAllProductsService = async (query: ProductQueryParamsDTO) => {
 
   const sort = query.sort ? query.sort.split(",").join(" ") : "-createdAt";
 
-  const products = await Product.find(mongoQuery).sort(sort).skip(skip).limit(limit);
+  const products = await Product.find(mongoQuery)
+    .sort(sort)
+    .skip(skip)
+    .limit(limit)
+    .populate("brand", "slug name description country createdAt updatedAt")
+    .populate("category", "name createdAt updatedAt")
+    .populate("seller", "name description createdAt updatedAt");
 
   return products;
 };

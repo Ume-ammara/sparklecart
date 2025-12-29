@@ -16,14 +16,14 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "../ui/carousel";
+import { BrandDTO, CategoryDTO } from "@/types/productType";
 
 interface Product {
   _id: string;
   name: string;
   slug: string;
-  company: string;
-  location: string;
-  category: string;
+  brand: BrandDTO;
+  category: CategoryDTO;
   gender: string;
   images: string[];
   price: number;
@@ -78,7 +78,9 @@ const ProductCard = ({ product, cart, handleAddToCart }: ProductCardProps) => {
             <h3 className="text-base font-semibold line-clamp-1">
               {product.name}
             </h3>
-            <p className="text-xs text-muted-foreground">{product.company}</p>
+            <p className="text-xs text-muted-foreground">
+              {product.brand.name}
+            </p>
           </div>
           <div className="flex items-center text-yellow-500 text-xs">
             <Star className="h-4 w-4 fill-yellow-500 mr-1" />

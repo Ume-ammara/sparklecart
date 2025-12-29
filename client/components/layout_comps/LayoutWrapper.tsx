@@ -14,7 +14,7 @@ export default function LayoutWrapper({
 }) {
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const isSellerDashboard = pathname === "/dashboard/seller";
+  const showNavbar = ["/products", "/dashboard/seller"].includes(pathname);
 
   const { user, fetchUserProfile } = useAuthStore();
 
@@ -28,7 +28,7 @@ export default function LayoutWrapper({
   return (
     <>
       <InfoBar />
-      {!isSellerDashboard && <Navbar />}
+      {!showNavbar && <Navbar />}
       {children}
       {isHome && <Footer />}
     </>

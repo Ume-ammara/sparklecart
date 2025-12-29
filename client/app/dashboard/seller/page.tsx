@@ -2,14 +2,13 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { LayoutGrid, List, PlusCircle, Trash, Trash2 } from "lucide-react";
+import { LayoutGrid, List, PlusCircle } from "lucide-react";
 
 import SellerProductTable from "@/components/seller_comps/SellerProductTable";
 import SellerProductCard from "@/components/seller_comps/SellerProductCard";
 import Spinner from "@/components/shared/Spinner";
 import { Button } from "@/components/ui/button";
 import { useSellerStore } from "@/store/sellerStore";
-import ActionButton from "@/components/shared/ActionButton";
 
 type ViewType = "table" | "card";
 

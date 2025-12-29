@@ -1,5 +1,6 @@
 import { axiosClient } from "@/api/axiosClient";
 import { ProductFormDTO } from "@/schemas/productSchema";
+import { SellerFormDTO } from "@/schemas/sellerSchema";
 import { ProductDTO } from "@/types/productType";
 import { toFormData } from "@/util/sanitize";
 
@@ -12,6 +13,7 @@ type ProductStore = {
   error: string | null;
   success: string | null;
 
+  becomeASeller: (data: SellerFormDTO) => Promise<void>;
   fetchSellerProducts: () => void;
   fetchSellerProductById: (productId: string) => void;
   createProduct: (formData: ProductFormDTO) => void;
@@ -28,6 +30,26 @@ const useSellerStore = create<ProductStore>((set, get) => ({
   isLoading: false,
   error: null,
   success: null,
+
+  // Become A Seller
+  becomeASeller: async (data) => {
+    try {
+      set({ isLoading: true, error: null, success: null });
+
+      const res = await axiosClient.post("/seller", data);
+      set({
+        success: res.data?.message || "Seller account created successfully",
+      });
+    } catch (err: any) {
+      set({
+        error:
+          err?.response?.data?.message ||
+          "Failed to become a seller. Please try again.",
+      });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
 
   fetchSellerProducts: async () => {
     try {

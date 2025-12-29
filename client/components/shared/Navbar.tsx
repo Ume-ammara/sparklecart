@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
 
 const navLinks = [
-  { label: "Shop", href: "#" },
+  { label: "Shop", href: "/products" },
   { label: "On Sale", href: "#" },
   { label: "New Arrivals", href: "#" },
   { label: "Brands", href: "#" },

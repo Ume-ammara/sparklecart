@@ -3,8 +3,10 @@
 import ProfileCard from "@/components/user_comps/ProfileCard";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/shared/Spinner";
+import BecomeASeller from "@/components/seller_comps/BecomeASeller";
+
 import { useAuthStore } from "@/store/authStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -21,7 +23,6 @@ import {
   ShieldCheck,
   LogOut,
 } from "lucide-react";
-import Link from "next/link";
 
 const shortcuts = [
   { label: "My Orders", icon: Package },
@@ -32,19 +33,21 @@ const shortcuts = [
 
 const additionalActions = [
   { label: "Sell on SparkleCart", icon: Store, href: "/dashboard/seller" },
-  { label: "Your Reviews", icon: Star, href: "" },
-  { label: "Saved Address", icon: MapPin, href: "" },
-  { label: "Payment Methods", icon: CreditCard, href: "" },
-  { label: "Settings", icon: Settings, href: "" },
-  { label: "Help Center", icon: HelpCircle, href: "" },
-  { label: "Terms & Conditions", icon: ShieldCheck, href: "" },
+  { label: "Your Reviews", icon: Star, href: "/reviews" },
+  { label: "Saved Address", icon: MapPin, href: "/addresses" },
+  { label: "Payment Methods", icon: CreditCard, href: "/payments" },
+  { label: "Settings", icon: Settings, href: "/settings" },
+  { label: "Help Center", icon: HelpCircle, href: "/help" },
+  { label: "Terms & Conditions", icon: ShieldCheck, href: "/terms" },
 ];
 
 const Page = () => {
   const router = useRouter();
   const { user, isLoading, error } = useAuthStore();
 
-  // If refresh token expired then redirect to login page
+  const [openSellerForm, setOpenSellerForm] = useState(false);
+
+  // Redirect if refresh token expired
   useEffect(() => {
     if (error === "Refresh token expired please login") {
       router.replace("/auth/login");
@@ -63,62 +66,77 @@ const Page = () => {
   }
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-5xl px-4 py-8">
-        <ProfileCard {...user} />
+    <>
+      <main className="min-h-screen bg-background text-foreground">
+        <div className="mx-auto max-w-5xl px-4 py-8">
+          <ProfileCard {...user} />
 
-        {/* Shortcuts */}
-        <section className="mt-10">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {shortcuts.map(({ label, icon: Icon }) => (
-              <Button
-                key={label}
-                variant="outline"
-                className="flex h-24 flex-col items-center justify-center gap-2"
-              >
-                <Icon className="h-6 w-6" />
-                <span className="text-xs font-medium">{label}</span>
-              </Button>
-            ))}
-          </div>
-        </section>
-
-        {/* Actions */}
-        <section className="mt-10 border-t pt-6">
-          <div className="grid gap-3 sm:grid-cols-2">
-            {additionalActions.map(({ label, icon: Icon, href }) => (
-              <Button
-                key={label}
-                variant="ghost"
-                className="w-full justify-start gap-3"
-              >
-                <Link
-                  href={href}
-                  className="flex justify-start items-center gap-3"
+          {/* SHORTCUTS */}
+          <section className="mt-10">
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+              {shortcuts.map(({ label, icon: Icon }) => (
+                <Button
+                  key={label}
+                  variant="outline"
+                  className="flex h-24 flex-col items-center justify-center gap-2"
                 >
-                  <Icon className="h-5 w-5 text-muted-foreground" />
-                  <span className="text-sm">{label}</span>
-                </Link>
-              </Button>
-            ))}
-          </div>
-        </section>
+                  <Icon className="h-6 w-6" />
+                  <span className="text-xs font-medium">{label}</span>
+                </Button>
+              ))}
+            </div>
+          </section>
 
-        {/* Logout */}
-        <section className="mt-10 border-t pt-6">
-          <Button
-            variant="outline"
-            className="w-full justify-center gap-2 bg-secondary text-secondary-foreground hover:bg-secondary/90"
-            onClick={() => {
-              console.log("User Logged Out");
-            }}
-          >
-            <LogOut className="h-5 w-5" />
-            Logout
-          </Button>
-        </section>
-      </div>
-    </main>
+          {/* ACTIONS */}
+          <section className="mt-10 border-t pt-6">
+            <div className="grid gap-3 sm:grid-cols-2">
+              {additionalActions.map(({ label, icon: Icon, href }) => {
+                const isSellAction = label === "Sell on SparkleCart";
+
+                return (
+                  <Button
+                    key={label}
+                    variant="ghost"
+                    className="w-full justify-start gap-3"
+                    onClick={() => {
+                      if (isSellAction && user.role !== "seller") {
+                        setOpenSellerForm(true);
+                      } else {
+                        router.push(href);
+                      }
+                    }}
+                  >
+                    <Icon className="h-5 w-5 text-muted-foreground" />
+                    <span className="text-sm">{label}</span>
+                  </Button>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* LOGOUT */}
+          <section className="mt-10 border-t pt-6">
+            <Button
+              variant="outline"
+              className="w-full justify-center gap-2 bg-secondary text-secondary-foreground hover:bg-secondary/90"
+              onClick={() => {
+                console.log("User Logged Out");
+                // logout logic here
+              }}
+            >
+              <LogOut className="h-5 w-5" />
+              Logout
+            </Button>
+          </section>
+        </div>
+      </main>
+
+      {/* SELLER MODAL */}
+      <BecomeASeller
+        open={openSellerForm}
+        onClose={() => setOpenSellerForm(false)}
+      />
+    </>
   );
 };
 
