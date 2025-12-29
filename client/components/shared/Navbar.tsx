@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
+import { Badge, Menu, Search, ShoppingCart, User, X } from "lucide-react";
+import { Button } from "../ui/button";
+import { useCartStore } from "@/store/cartStore";
 
 const navLinks = [
   { label: "Shop", href: "/products" },
@@ -14,6 +16,10 @@ const navLinks = [
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+
+  const { carts } = useCartStore();
+
+  console.log("CARTS LENGTH", carts);
 
   return (
     <header className="border-b border-border bg-background">
@@ -67,15 +73,25 @@ const Navbar = () => {
             <Search className="h-5 w-5" />
           </button>
 
-          <button aria-label="Cart">
-            <ShoppingCart className="h-5 w-5" />
-          </button>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="relative rounded-full p-2 cursor-pointer"
+            aria-label="Notifications"
+          >
+            <Link href={"/dashboard/cart"}>
+              <ShoppingCart className="h-5 w-5" />
+              <Badge className="absolute top-1 right-1 inline-flex items-center justify-center px-1 py-0.5 text-[10px] font-bold leading-none text-white bg-primary rounded-full">
+                {carts?.length}
+              </Badge>
+            </Link>
+          </Button>
 
-          <button aria-label="Account">
+          <Button size="icon" variant="ghost" aria-label="Account">
             <Link href={"/dashboard"}>
               <User className="h-5 w-5" />
             </Link>
-          </button>
+          </Button>
         </div>
       </div>
 

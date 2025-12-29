@@ -23,6 +23,7 @@ import {
   ShieldCheck,
   LogOut,
 } from "lucide-react";
+import { useCartStore } from "@/store/cartStore";
 
 const shortcuts = [
   { label: "My Orders", icon: Package },
@@ -47,12 +48,20 @@ const Page = () => {
 
   const [openSellerForm, setOpenSellerForm] = useState(false);
 
+  const { carts, fetchAllCarts } = useCartStore();
+
   // Redirect if refresh token expired
   useEffect(() => {
     if (error === "Refresh token expired please login") {
       router.replace("/auth/login");
     }
   }, [error, router]);
+
+  useEffect(() => {
+    if (carts === null) {
+      fetchAllCarts();
+    }
+  }, [fetchAllCarts, carts]);
 
   if (isLoading || !user) {
     return (
