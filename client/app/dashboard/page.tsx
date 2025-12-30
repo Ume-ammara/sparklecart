@@ -24,12 +24,13 @@ import {
   LogOut,
 } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
+import Link from "next/link";
 
 const shortcuts = [
-  { label: "My Orders", icon: Package },
-  { label: "Transactions", icon: Wallet },
-  { label: "Cart", icon: ShoppingCart },
-  { label: "Saved", icon: Heart },
+  { label: "My Orders", icon: Package, href: "/dashboard/order" },
+  { label: "Transactions", icon: Wallet, href: "/dashboard/transactions" },
+  { label: "Cart", icon: ShoppingCart, href: "/dashboard/cart" },
+  { label: "Saved", icon: Heart, href: "/dashboard/wishlist" },
 ];
 
 const additionalActions = [
@@ -83,15 +84,15 @@ const Page = () => {
           {/* SHORTCUTS */}
           <section className="mt-10">
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-              {shortcuts.map(({ label, icon: Icon }) => (
-                <Button
+              {shortcuts.map(({ label, icon: Icon, href }) => (
+                <Link
                   key={label}
-                  variant="outline"
+                  href={href}
                   className="flex h-24 flex-col items-center justify-center gap-2"
                 >
                   <Icon className="h-6 w-6" />
                   <span className="text-xs font-medium">{label}</span>
-                </Button>
+                </Link>
               ))}
             </div>
           </section>

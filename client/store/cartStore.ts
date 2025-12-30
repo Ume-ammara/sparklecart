@@ -25,7 +25,7 @@ const useCartStore = create<ProductStore>((set, get) => ({
       console.log("RES FOR CARTS : ", res);
       set({ success: res.data.data.message, carts: res.data.data.cartItems });
     } catch (error: any) {
-      set({ error: error });
+      set({ error: error.response.message });
     } finally {
       set({ isLoading: false });
     }

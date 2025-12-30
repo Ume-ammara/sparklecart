@@ -5,17 +5,30 @@ import { Minus, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/store/cartStore";
+import Spinner from "@/components/shared/Spinner";
+import Image from "next/image";
 
 export default function CartPage() {
   const { carts, fetchAllCarts, isLoading, error } = useCartStore();
 
   useEffect(() => {
-    fetchAllCarts();
-  }, []);
+    if (carts === null) {
+      fetchAllCarts();
+    }
+  }, [fetchAllCarts, carts]);
 
   const subtotal =
     carts?.reduce((acc, item) => acc + item.product.price * item.quantity, 0) ??
     0;
+
+  if (isLoading) {
+    return (
+      <div className="text-center text-sm text-muted-foreground">
+        <Spinner />
+        <span>Loading cart...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -24,13 +37,6 @@ export default function CartPage() {
         <h1 className="mb-6 text-lg font-semibold">
           My Cart ({carts?.length ?? 0})
         </h1>
-
-        {/* Loading */}
-        {isLoading && (
-          <p className="text-center text-sm text-muted-foreground">
-            Loading cart...
-          </p>
-        )}
 
         {/* Error */}
         {error && (
@@ -58,10 +64,13 @@ export default function CartPage() {
               >
                 {/* Product */}
                 <div className="col-span-2 flex gap-4 md:col-span-1">
-                  <img
+                  <Image
+                    
+                    width={250}
+                    height={200}
                     src={item.product.images?.[0]}
                     alt={item.product.name}
-                    className="h-24 w-20 rounded-md border object-cover"
+                    className="max-h-24 max-w-20 md:max-w-full md:max-h-full rounded-md border object-cover"
                   />
 
                   <div className="space-y-1">

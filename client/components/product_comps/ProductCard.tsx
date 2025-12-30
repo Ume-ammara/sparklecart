@@ -17,6 +17,7 @@ import {
   CarouselPrevious,
 } from "../ui/carousel";
 import { BrandDTO, CategoryDTO } from "@/types/productType";
+import Link from "next/link";
 
 interface Product {
   _id: string;
@@ -75,9 +76,12 @@ const ProductCard = ({ product, cart, handleAddToCart }: ProductCardProps) => {
       <CardContent className="p-4 space-y-2">
         <div className="flex justify-between items-start">
           <div>
-            <h3 className="text-base font-semibold line-clamp-1">
+            <Link
+              href={`/products/${product._id}`}
+              className="text-base font-semibold line-clamp-1"
+            >
               {product.name}
-            </h3>
+            </Link>
             <p className="text-xs text-muted-foreground">
               {product.brand.name}
             </p>
