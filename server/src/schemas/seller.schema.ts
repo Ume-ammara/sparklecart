@@ -53,17 +53,13 @@ export const updateAllProductsSchema = z.object({
 });
 
 export const updateProductByIdSchema = z.object({
-  slug: z.string().min(3).max(100).toLowerCase().optional(),
-  name: z.string().min(3).max(100),
-  description: z.string().min(10).max(1000),
-  price: z.number().positive(),
-  quantity: z.number().int().nonnegative(),
-  category: z.string().min(3).max(50),
-  images: z
-    .array(z.string().nonempty("Image URL cannot be empty"))
-    .min(1, "At least one image is required")
-    .optional(),
-  userId: z.string().nonempty("User id is required"),
+  slug: z.string().min(3).max(100).optional(),
+  name: z.string().min(3).max(100).optional(),
+  description: z.string().min(10).max(1000).optional(),
+  category: z.string().min(3).max(50).optional(),
+  price: z.number().positive().optional(),
+  quantity: z.number().int().nonnegative().optional(),
+  userId: z.string().nonempty(),
 });
 
 export type BecomeASellerDTO = z.infer<typeof becomeAsellerSchema>;

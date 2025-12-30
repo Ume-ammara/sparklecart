@@ -17,7 +17,6 @@ import {
   updateProductByIdSchema,
 } from "../schemas/seller.schema.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { Multer } from "multer";
 
 export const becomeASellerController = asyncHandler(async (req: Request, res: Response) => {
   const { data } = becomeAsellerSchema.safeParse({ ...req.body, userId: req.user?._id });
@@ -90,12 +89,28 @@ export const getProductByIdController = asyncHandler(async (req: Request, res: R
 });
 
 export const updateProductByIdController = asyncHandler(async (req: Request, res: Response) => {
-  const { data } = updateProductByIdSchema.safeParse({
-    ...req.body,
-    userId: req.user._id,
-  });
+  console.log("UPDATE BOYD : ", req.body);
+
   const productId = req.params.id;
-  const product = await updateProductByIdService(data, productId);
+
+  const body = {
+    slug: req.body.slug?.trim(),
+    name: req.body.name?.trim(),
+    description: req.body.description?.trim(),
+    category: req.body.category?.trim(),
+
+    price: req.body.price !== undefined ? Number(req.body.price) : undefined,
+    quantity: req.body.quantity !== undefined ? Number(req.body.quantity) : undefined,
+
+    userId: req.user!._id,
+  };
+
+  const files = req.files as Express.Multer.File[] | undefined;
+
+  const parsed = updateProductByIdSchema.safeParse(body);
+
+  const product = await updateProductByIdService(parsed.data, files, productId);
+
   res.status(200).json(new ApiResponse(200, "Product updated successfully", { product }));
 });
 

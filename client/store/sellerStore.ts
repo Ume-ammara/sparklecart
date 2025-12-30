@@ -16,7 +16,7 @@ type ProductStore = {
   becomeASeller: (data: SellerFormDTO) => Promise<void>;
   fetchSellerProducts: () => void;
   fetchSellerProductById: (productId: string) => void;
-  createProduct: (formData: ProductFormDTO) => void;
+  createProduct: (formData: ProductFormDTO) => Promise<void>;
 
   updateProduct: (id: string, data: Partial<ProductFormDTO>) => Promise<void>;
 
@@ -31,21 +31,16 @@ const useSellerStore = create<ProductStore>((set, get) => ({
   error: null,
   success: null,
 
-  // Become A Seller
   becomeASeller: async (data) => {
     try {
       set({ isLoading: true, error: null, success: null });
-
       const res = await axiosClient.post("/seller", data);
-      set({
-        success: res.data?.message || "Seller account created successfully",
-      });
+      set({ success: res.data?.message });
     } catch (err: any) {
       set({
-        error:
-          err?.response?.data?.message ||
-          "Failed to become a seller. Please try again.",
+        error: err?.response?.data?.message || "Failed to become a seller",
       });
+      throw err;
     } finally {
       set({ isLoading: false });
     }
@@ -53,79 +48,95 @@ const useSellerStore = create<ProductStore>((set, get) => ({
 
   fetchSellerProducts: async () => {
     try {
-      set({ isLoading: true, error: null, success: null });
+      set({ isLoading: true, error: null });
       const res = await axiosClient.get("/seller/products");
       set({
-        success: res.data.data.message,
         sellerProducts: res.data.data.products,
       });
-    } catch (error: any) {
-      set({ error: error });
-    } finally {
-      set({ isLoading: false });
-    }
-  },
-
-  fetchSellerProductById: async (productId) => {
-    try {
-      set({ isLoading: true, error: null, success: null });
-      const res = await axiosClient.get(`/seller/products/${productId}`);
+    } catch (err: any) {
       set({
-        success: res.data.data.message,
-        sellerProduct: res.data.data.product,
+        error: err?.response?.data?.message || "Failed to fetch products",
       });
-    } catch (error: any) {
-      set({ error: error });
     } finally {
       set({ isLoading: false });
     }
   },
 
-  createProduct: async (formData: ProductFormDTO) => {
+  fetchSellerProductById: async (id) => {
     try {
-      set({ isLoading: true, error: null, success: null });
+      set({ isLoading: true, error: null });
+      const res = await axiosClient.get(`/seller/products/${id}`);
+      set({ sellerProduct: res.data.data.product });
+    } catch (err: any) {
+      set({
+        error: err?.response?.data?.message || "Failed to fetch product",
+      });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  createProduct: async (formData) => {
+    try {
+      set({ isLoading: true, error: null });
       const data = toFormData(formData);
+
       const res = await axiosClient.post("/seller/products", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      set({
+
+      set((state) => ({
+        sellerProducts: state.sellerProducts
+          ? [res.data.data.product, ...state.sellerProducts]
+          : [res.data.data.product],
         success: res.data.data.message,
-        sellerProducts: [get().sellerProducts, ...res.data.data.products],
+      }));
+    } catch (err: any) {
+      set({
+        error: err?.response?.data?.message || "Failed to create product",
       });
-    } catch (error: any) {
-      set({ error: error });
+      throw err;
     } finally {
       set({ isLoading: false });
     }
   },
 
-  // UPDATE
   updateProduct: async (id, updateData) => {
     try {
       set({ isLoading: true, error: null });
 
-      const res = await axiosClient.patch(`/seller/products/${id}`, updateData);
+      const data = toFormData(updateData);
+      const res = await axiosClient.patch(`/seller/products/${id}`, data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      set((state) => ({
+        sellerProducts: state.sellerProducts
+          ? state.sellerProducts.map((p) =>
+              p._id === id ? res.data.data.product : p
+            )
+          : state.sellerProducts,
+        sellerProduct: res.data.data.product,
+        success: res.data.data.message,
+      }));
     } catch (err: any) {
       set({
         error: err?.response?.data?.message || "Failed to update product",
       });
+      throw err;
     } finally {
       set({ isLoading: false });
     }
   },
 
-  // DELETE ONE
   deleteProduct: async (id) => {
     try {
       set({ isLoading: true, error: null });
-
       await axiosClient.delete(`/seller/products/${id}`);
 
       set((state) => ({
-        sellerProducts: state.sellerProducts
-          ? state.sellerProducts.filter((p) => p._id !== id)
-          : [],
-        success: "Product deleted successfully",
+        sellerProducts: state.sellerProducts?.filter((p) => p._id !== id),
+        success: "Product deleted",
       }));
     } catch (err: any) {
       set({
@@ -136,15 +147,13 @@ const useSellerStore = create<ProductStore>((set, get) => ({
     }
   },
 
-  // DELETE ALL
   deleteAllProducts: async () => {
     try {
       set({ isLoading: true, error: null });
-
       await axiosClient.delete("/seller/products");
-
       set({
         sellerProducts: [],
+        sellerProduct: null,
         success: "All products deleted",
       });
     } catch (err: any) {
@@ -156,5 +165,6 @@ const useSellerStore = create<ProductStore>((set, get) => ({
     }
   },
 }));
+
 
 export { useSellerStore };

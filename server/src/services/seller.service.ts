@@ -199,37 +199,56 @@ export const getProductByIdService = async (productId: string) => {
 };
 
 export const updateProductByIdService = async (
-  { name, description, price, quantity, category, images, userId }: updateProductDTO,
+  data: {
+    slug?: string;
+    name?: string;
+    description?: string;
+    category?: string;
+    price?: number;
+    quantity?: number;
+    userId: string;
+  },
+  files: Express.Multer.File[] | undefined,
   productId: string
 ) => {
-  const seller = await Seller.findOne({ user: userId });
-
+  const seller = await Seller.findOne({ user: data.userId });
   if (!seller) {
     throw new ApiError(401, "You are not registered as a seller");
   }
-  let productCategory = await Category.findOne({ name: category });
 
-  if (!productCategory) {
-    productCategory = await Category.create({ name: category });
-  }
-
-  const updateProduct = await Product.findByIdAndUpdate(
-    productId,
-    {
-      name,
-      description,
-      price,
-      quantity,
-      category: productCategory,
-      images,
-    },
-    { new: true }
-  );
-
-  if (!updateProduct) {
+  const product = await Product.findById(productId);
+  if (!product) {
     throw new ApiError(404, "Product not found");
   }
-  return updateProduct;
+
+  // Ignore fields if no changes were made
+  if (data.slug !== undefined) product.slug = data.slug;
+  if (data.name !== undefined) product.name = data.name;
+  if (data.description !== undefined) product.description = data.description;
+  if (data.price !== undefined) product.price = data.price;
+  if (data.quantity !== undefined) product.quantity = data.quantity;
+
+  if (data.category) {
+    let productCategory = await Category.findOne({ name: data.category });
+    if (!productCategory) {
+      productCategory = await Category.create({ name: data.category });
+    }
+    product.category = productCategory._id;
+  }
+
+  if (files && files.length > 0) {
+    const imageUrls: string[] = [];
+
+    for (const img of files) {
+      const url = await uploadOnCloudinary(img.path);
+      imageUrls.push(url);
+    }
+
+    product.images.push(...imageUrls);
+  }
+
+  await product.save();
+  return product;
 };
 
 export const deleteProductByIdService = async (sellerId: string, productId: string) => {

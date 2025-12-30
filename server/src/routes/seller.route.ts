@@ -24,7 +24,7 @@ sellerRouter
 sellerRouter
   .route("/products/:id")
   .get(isLoggedIn, isSeller, getProductByIdController)
-  .patch(isLoggedIn, isSeller, updateProductByIdController)
+  .patch(isLoggedIn, isSeller, upload.array("images", 5), updateProductByIdController)
   .delete(isLoggedIn, isSeller, deleteProductByIdController);
 
 export { sellerRouter };

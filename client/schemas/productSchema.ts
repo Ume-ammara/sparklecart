@@ -12,7 +12,7 @@ const imageFileSchema = z
     "Image size must be under 5MB"
   );
 
-export const productSchema = z.object({
+const baseProductSchema = z.object({
   slug: z.string().min(3).max(100).toLowerCase(),
   name: z.string().min(3).max(100),
   description: z.string().min(10).max(1000),
@@ -22,14 +22,22 @@ export const productSchema = z.object({
 
   category: z.string().min(3).max(50).toLowerCase(),
 
-  images: z.array(imageFileSchema).min(1, "At least one image is required"),
+  images: z.array(imageFileSchema).optional(),
 
   brand: z.object({
     slug: z.string().min(1).toLowerCase(),
     name: z.string().min(1),
     description: z.string().min(1),
     country: z.string().min(1),
-  })
+  }),
 });
 
-export type ProductFormDTO = z.infer<typeof productSchema>;
+export const createProductSchema = baseProductSchema.extend({
+  images: z.array(imageFileSchema).min(1, "At least one image is required"),
+});
+
+export const updateProductSchema = baseProductSchema.extend({
+  images: z.array(imageFileSchema).optional(),
+});
+
+export type ProductFormDTO = z.infer<typeof baseProductSchema>;
