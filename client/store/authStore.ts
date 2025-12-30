@@ -57,7 +57,7 @@ const useAuthStore = create<AuthStore>((set, get) => ({
       set({
         error:
           error?.response?.data?.message ||
-          error.message ||
+          error?.message ||
           "Something went wrong",
       });
     } finally {

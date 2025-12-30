@@ -14,7 +14,11 @@ export default function LayoutWrapper({
 }) {
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const showNavbar = ["/products", "/dashboard/seller"].includes(pathname);
+  const showNavbar = [
+    "/products",
+    "/dashboard/seller",
+    "/dashboard/cart",
+  ].includes(pathname);
 
   const { user, fetchUserProfile } = useAuthStore();
 
