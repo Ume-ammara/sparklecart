@@ -32,7 +32,10 @@ export const addToCartController = asyncHandler(async (req: Request, res: Respon
 });
 
 export const removeFromCartController = asyncHandler(async (req: Request, res: Response) => {
-  const { data } = removeFromCartSchema.safeParse({ ...req.body, userId: req.user._id });
+  const { data } = removeFromCartSchema.safeParse({
+    cartItemId: req.params.cartItemId,
+    userId: req.user._id,
+  });
 
   await removeFromCartService(data);
 

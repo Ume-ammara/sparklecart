@@ -12,7 +12,7 @@ export const getAllCartItemsSchema = z.object({
 
 export const removeFromCartSchema = z.object({
   userId: z.string().nonempty("User id is required"),
-  productId: z.string().nonempty("Prodcut id is required"),
+  cartItemId: z.string().nonempty("Prodcut id is required"),
 });
 
 export const clearCartItemsSchema = z.object({

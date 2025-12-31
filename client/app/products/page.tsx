@@ -5,6 +5,7 @@ import MobileHeader from "@/components/product_comps/MobileHeader";
 import ProductCard from "@/components/product_comps/ProductCard";
 import SearchBar from "@/components/product_comps/SearchBar";
 import SortMenu from "@/components/product_comps/SortMenu";
+import { useCartStore } from "@/store/cartStore";
 
 import { useProductStore } from "@/store/productStore";
 import { BrandDTO, CategoryDTO } from "@/types/productType";
@@ -133,10 +134,11 @@ const Page = () => {
   ]);
 
   // ===================== ACTIONS =====================
-  const handleAddToCart = (id: string) => {
-    setCart((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    );
+
+  const { addToCart, isLoading, error, success } = useCartStore();
+
+  const handleAddToCart = async (id: string) => {
+    await addToCart(id);
   };
 
   const resetFilters = () => {
@@ -212,6 +214,7 @@ const Page = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredProducts.map((product) => (
                 <ProductCard
+                  isLoading={isLoading}
                   key={product._id}
                   product={product}
                   cart={cart}

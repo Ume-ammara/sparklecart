@@ -18,6 +18,7 @@ import {
 } from "../ui/carousel";
 import { BrandDTO, CategoryDTO } from "@/types/productType";
 import Link from "next/link";
+import Spinner from "../shared/Spinner";
 
 interface Product {
   _id: string;
@@ -34,12 +35,18 @@ interface Product {
 }
 
 interface ProductCardProps {
+  isLoading?: boolean;
   product: Product;
   cart: string[];
   handleAddToCart: (id: string) => void;
 }
 
-const ProductCard = ({ product, cart, handleAddToCart }: ProductCardProps) => {
+const ProductCard = ({
+  isLoading,
+  product,
+  cart,
+  handleAddToCart,
+}: ProductCardProps) => {
   const isInCart = cart?.includes(product._id);
   const hasMultipleImages = product.images.length > 1;
 
@@ -106,7 +113,16 @@ const ProductCard = ({ product, cart, handleAddToCart }: ProductCardProps) => {
           variant={isInCart ? "secondary" : "default"}
           className="w-full"
         >
-          {isInCart ? "Remove from Cart" : "Add to Cart"}
+          {isInCart ? (
+            "Remove from Cart"
+          ) : isLoading ? (
+            <>
+              <Spinner />
+              Adding
+            </>
+          ) : (
+            "Add to Cart"
+          )}
         </Button>
       </CardFooter>
     </Card>

@@ -41,17 +41,17 @@ export const addToCartService = async ({ userId, productId, quantity }: AddToCar
   return cartItem;
 };
 
-export const removeFromCartService = async ({ userId, productId }: RemoveFromCartDTO) => {
-  logger.info(`Removing product ${productId} from cart for user: ${userId}`);
+export const removeFromCartService = async ({ userId, cartItemId }: RemoveFromCartDTO) => {
+  logger.info(`Removing product ${cartItemId} from cart for user: ${userId}`);
 
-  const result = await Cart.deleteOne({ user: userId, product: productId, isPurchased: false });
+  const result = await Cart.deleteOne({ user: userId, _id: cartItemId, isPurchased: false });
 
   if (result.deletedCount === 0) {
-    logger.warn(`Product ${productId} not found in cart for user: ${userId}`);
+    logger.warn(`Product ${cartItemId} not found in cart for user: ${userId}`);
     throw new ApiError(404, "Product not found in cart");
   }
 
-  logger.info(`Removed product ${productId} from cart for user: ${userId}`);
+  logger.info(`Removed product ${cartItemId} from cart for user: ${userId}`);
   return;
 };
 
@@ -63,7 +63,7 @@ export const clearCartItemsService = async ({ userId }: ClearCartItemsDTO) => {
   if (result.deletedCount === 0) {
     logger.warn(`No items found in cart to clear for user: ${userId}`);
     throw new ApiError(404, "No items found in cart to clear");
-  } 
+  }
 
   logger.info(`Cleared cart for user: ${userId}`);
   return;

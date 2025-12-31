@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Heart, HeartOff, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProductDTO } from "@/types/productType";
+import { useParams } from "next/navigation";
+import { getProxiedPluginState } from "next/dist/build/build-context";
 
 export default function ProductPage(product: ProductDTO) {
   const [quantity, setQuantity] = useState(1);

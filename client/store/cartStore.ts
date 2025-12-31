@@ -1,47 +1,106 @@
 import { axiosClient } from "@/api/axiosClient";
 import { CartDTO } from "@/types/cartType";
-
 import { create } from "zustand";
 
-type ProductStore = {
+type CartStore = {
   carts: CartDTO[] | null;
   isLoading: boolean;
   error: string | null;
   success: string | null;
 
-  fetchAllCarts: () => void;
+  fetchAllCarts: () => Promise<void>;
+  addToCart: (productId: string, quantity?: number) => Promise<void>;
+  removeFromCart: (cartItemId: string) => Promise<void>;
+  clearAllCart: () => Promise<void>;
 };
 
-const useCartStore = create<ProductStore>((set, get) => ({
+export const useCartStore = create<CartStore>((set, get) => ({
   carts: null,
   isLoading: false,
   error: null,
   success: null,
 
+  /* ================= FETCH ================= */
   fetchAllCarts: async () => {
     try {
-      set({ isLoading: true, error: null, success: null });
+      set({ isLoading: true, error: null });
       const res = await axiosClient.get("/carts");
-      console.log("RES FOR CARTS : ", res);
-      set({ success: res.data.data.message, carts: res.data.data.cartItems });
-    } catch (error: any) {
-      set({ error: error.response.message });
+
+      set({
+        carts: res.data.data.cartItems,
+        success: res.data.data.message,
+      });
+    } catch (err: any) {
+      set({
+        error: err?.response?.data?.message || "Failed to fetch cart items",
+      });
     } finally {
       set({ isLoading: false });
     }
   },
-  addToCart: async () => {
+
+  /* ================= ADD ================= */
+  addToCart: async (productId, quantity = 1) => {
     try {
-      set({ isLoading: true, error: null, success: null });
-      const res = await axiosClient.post("/carts");
-      console.log("ADD TO CART : ", res);
-      set({ success: res.data.data.message, carts: res.data.data.cart });
-    } catch (error: any) {
-      set({ error: error.response.message });
+      set({ isLoading: true, error: null });
+
+      const res = await axiosClient.post("/carts", {
+        productId,
+        quantity,
+      });
+
+      set({
+        carts: res.data.data.cartItems,
+        success: res.data.data.message,
+      });
+    } catch (err: any) {
+      set({
+        error: err?.response?.data?.message || "Failed to add product to cart",
+      });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  /* ================= REMOVE ================= */
+  removeFromCart: async (cartItemId) => {
+    try {
+      set({ isLoading: true, error: null });
+
+      await axiosClient.delete(`/carts/${cartItemId}`);
+
+      set((state) => ({
+        carts: state.carts
+          ? state.carts.filter((item) => item._id !== cartItemId)
+          : [],
+        success: "Item removed from cart",
+      }));
+    } catch (err: any) {
+      set({
+        error: err?.response?.data?.message || "Failed to remove cart item",
+      });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  /* ================= CLEAR ================= */
+  clearAllCart: async () => {
+    try {
+      set({ isLoading: true, error: null });
+
+      await axiosClient.delete("/carts/clear");
+
+      set({
+        carts: [],
+        success: "Cart cleared successfully",
+      });
+    } catch (err: any) {
+      set({
+        error: err?.response?.data?.message || "Failed to clear cart",
+      });
     } finally {
       set({ isLoading: false });
     }
   },
 }));
-
-export { useCartStore };

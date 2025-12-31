@@ -11,7 +11,7 @@ const cartRouter = Router();
 
 cartRouter.route("/").get(isLoggedIn, getAllCartItemsController);
 cartRouter.route("/").post(isLoggedIn, addToCartController);
-cartRouter.route("/").delete(isLoggedIn, removeFromCartController);
 cartRouter.route("/clear").delete(isLoggedIn, clearCartController);
+cartRouter.route("/:cartItemId").delete(isLoggedIn, removeFromCartController);
 
 export { cartRouter };
