@@ -5,6 +5,7 @@ import {
   clearCartItemsSchema,
   getAllCartItemsSchema,
   removeFromCartSchema,
+  updateCartQuantitySchema,
 } from "../schemas/cart.schema.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import {
@@ -12,6 +13,7 @@ import {
   clearCartItemsService,
   getAllCartItemsService,
   removeFromCartService,
+  updateCartQuantityService,
 } from "../services/cart.service.js";
 
 export const getAllCartItemsController = asyncHandler(async (req: Request, res: Response) => {
@@ -47,4 +49,20 @@ export const clearCartController = asyncHandler(async (req: Request, res: Respon
   await clearCartItemsService(data);
 
   return res.status(200).json(new ApiResponse(200, "Cart cleared successfully"));
+});
+
+export const updateCartQuantityController = asyncHandler(async (req: Request, res: Response) => {
+  const { data } = updateCartQuantitySchema.safeParse({
+    userId: req.user._id,
+    cartItemId: req.params.cartItemId,
+    quantity: Number(req.body.quantity),
+  });
+
+  const cartItem = await updateCartQuantityService(data);
+
+  res.status(200).json(
+    new ApiResponse(200, "Cart updated successfully", {
+      cartItem,
+    })
+  );
 });

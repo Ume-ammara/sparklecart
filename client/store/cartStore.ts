@@ -12,6 +12,7 @@ type CartStore = {
   addToCart: (productId: string, quantity?: number) => Promise<void>;
   removeFromCart: (cartItemId: string) => Promise<void>;
   clearAllCart: () => Promise<void>;
+  updateCartQuantity: (cartItemId: string, quantity: number) => Promise<void>;
 };
 
 export const useCartStore = create<CartStore>((set, get) => ({
@@ -99,6 +100,35 @@ export const useCartStore = create<CartStore>((set, get) => ({
       set({
         error: err?.response?.data?.message || "Failed to clear cart",
       });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  /* ================= UPDATE QUANTITY ================= */
+  updateCartQuantity: async (cartItemId, quantity) => {
+    try {
+      set({ isLoading: true, error: null });
+
+      const res = await axiosClient.patch(`/carts/${cartItemId}/quantity`, {
+        quantity,
+      });
+
+      const updatedItem = res.data.data.cartItem;
+
+      set((state) => ({
+        carts: state.carts
+          ? state.carts.map((item) =>
+              item._id === cartItemId ? updatedItem : item
+            )
+          : state.carts,
+        success: res.data.message || "Cart updated successfully",
+      }));
+    } catch (err: any) {
+      set({
+        error: err?.response?.data?.message || "Failed to update cart quantity",
+      });
+      throw err;
     } finally {
       set({ isLoading: false });
     }

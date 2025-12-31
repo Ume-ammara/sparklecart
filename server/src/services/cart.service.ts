@@ -7,6 +7,7 @@ import {
 } from "../schemas/cart.schema.js";
 import { ApiError } from "../utils/ApiError.js";
 import { logger } from "../utils/logger.js";
+import { UpdateCartQuantityDTO } from "../schemas/cart.schema.js";
 
 export const getAllCartItemsService = async ({ userId }: GetAllCartItemsDTO) => {
   logger.info(`Fetching cart items for user: ${userId}`);
@@ -67,4 +68,39 @@ export const clearCartItemsService = async ({ userId }: ClearCartItemsDTO) => {
 
   logger.info(`Cleared cart for user: ${userId}`);
   return;
+};
+
+export const updateCartQuantityService = async ({
+  userId,
+  cartItemId,
+  quantity,
+}: UpdateCartQuantityDTO) => {
+  logger.info(`Updating cart item ${cartItemId} quantity to ${quantity} for user ${userId}`);
+
+  if (quantity < 1) {
+    throw new ApiError(400, "Quantity must be at least 1");
+  }
+
+  const updatedCartItem = await Cart.findOneAndUpdate(
+    {
+      _id: cartItemId,
+      user: userId,
+      isPurchased: false,
+    },
+    {
+      quantity,
+    },
+    {
+      new: true,
+    }
+  ).populate("product");
+
+  if (!updatedCartItem) {
+    logger.warn(`Cart item ${cartItemId} not found for user ${userId}`);
+    throw new ApiError(404, "Cart item not found");
+  }
+
+  logger.info(`Cart item ${cartItemId} successfully updated to quantity ${quantity}`);
+
+  return updatedCartItem;
 };
