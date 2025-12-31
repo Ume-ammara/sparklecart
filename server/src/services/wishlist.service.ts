@@ -13,7 +13,10 @@ export const getAllWishlistService = async ({ userId }: GetAllWishlistDTO) => {
   if (!user) {
     throw new ApiError(403, "User not found");
   }
-  const wishlist = await Wishlist.findOne({ user: userId }).populate("products");
+  const wishlist = await Wishlist.findOne({ user: userId }).populate({
+    path: "products",
+    select: "name price images",
+  });
   return wishlist;
 };
 
@@ -26,7 +29,7 @@ export const addToWishlistService = async ({ userId, productId }: AddToWishlistD
     { user: userId },
     { $addToSet: { products: productId } },
     { new: true, upsert: true }
-  );
+  ).populate({ path: "products", select: "name price images" });
 
   return wishlistProduct;
 };
