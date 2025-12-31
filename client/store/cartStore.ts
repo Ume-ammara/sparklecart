@@ -30,6 +30,18 @@ const useCartStore = create<ProductStore>((set, get) => ({
       set({ isLoading: false });
     }
   },
+  addToCart: async () => {
+    try {
+      set({ isLoading: true, error: null, success: null });
+      const res = await axiosClient.post("/carts");
+      console.log("ADD TO CART : ", res);
+      set({ success: res.data.data.message, carts: res.data.data.cart });
+    } catch (error: any) {
+      set({ error: error.response.message });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
 }));
 
 export { useCartStore };

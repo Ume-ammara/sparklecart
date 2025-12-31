@@ -5,6 +5,8 @@ import { useState } from "react";
 import { Badge, Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { useCartStore } from "@/store/cartStore";
+import ProfileDropdown from "../user_comps/ProfileDropdown";
+import { useAuthStore } from "@/store/authStore";
 
 const navLinks = [
   { label: "Shop", href: "/products" },
@@ -18,6 +20,7 @@ const Navbar = () => {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   const { carts } = useCartStore();
+  const { isAuthenticated } = useAuthStore();
 
   console.log("CARTS LENGTH", carts);
 
@@ -74,24 +77,32 @@ const Navbar = () => {
           </button>
 
           <Button
+            asChild
             size="icon"
             variant="ghost"
-            className="relative rounded-full p-2 cursor-pointer"
-            aria-label="Notifications"
+            className="relative rounded-full"
           >
-            <Link href={"/dashboard/cart"}>
+            <Link href="/dashboard/cart">
               <ShoppingCart className="h-5 w-5" />
-              <Badge className="absolute top-1 right-1 inline-flex items-center justify-center px-1 py-0.5 text-[10px] font-bold leading-none text-white bg-primary rounded-full">
-                {carts?.length}
-              </Badge>
+              <span className="absolute top-1 right-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
+                {carts?.length ?? 0}
+              </span>
             </Link>
           </Button>
 
-          <Button size="icon" variant="ghost" aria-label="Account">
+          {/* <Button size="icon" variant="ghost" aria-label="Account">
             <Link href={"/dashboard"}>
               <User className="h-5 w-5" />
             </Link>
-          </Button>
+          </Button> */}
+
+          {isAuthenticated ? (
+            <ProfileDropdown />
+          ) : (
+            <Button asChild variant="ghost">
+              <Link href="/auth/login">Login</Link>
+            </Button>
+          )}
         </div>
       </div>
 

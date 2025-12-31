@@ -4,6 +4,7 @@ export interface UserDTO {
   email: string;
   role: string;
   isEmailVerified: boolean;
+  avatarUrl?: string;
   lastLogin: string;
   createdAt: string;
   updatedAt: string;

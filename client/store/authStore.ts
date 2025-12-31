@@ -13,6 +13,7 @@ type AuthStore = {
 
   registerUser: (formData: RegisterFormDTO) => void;
   loginUser: (formData: LoginFormDTO) => void;
+  logoutUser: () => void;
   fetchUserProfile: () => void;
 };
 
@@ -39,7 +40,11 @@ const useAuthStore = create<AuthStore>((set, get) => ({
     try {
       set({ isLoading: true, error: null, success: null });
       const res = await axiosClient.post("/auth/login", formData);
-      set({ success: res.data.message, user: res.data.data?.user });
+      set({
+        success: res.data.message,
+        user: res.data.data?.user,
+        isAuthenticated: true,
+      });
     } catch (error: any) {
       set({ error: error });
     } finally {
@@ -51,7 +56,7 @@ const useAuthStore = create<AuthStore>((set, get) => ({
     try {
       set({ isLoading: true, error: null, success: null });
       const res = await axiosClient.get("/users/profile");
-      set({ user: res.data.data?.user });
+      set({ user: res.data.data?.user, isAuthenticated: true });
     } catch (error: any) {
       console.log("ERROR IN COUNT :", error);
       set({
@@ -60,6 +65,18 @@ const useAuthStore = create<AuthStore>((set, get) => ({
           error?.message ||
           "Something went wrong",
       });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  logoutUser: async () => {
+    try {
+      set({ isLoading: true, error: null, success: null });
+      const res = await axiosClient.post("/auth/logout");
+      set({ success: res.data.message, user: null, isAuthenticated: false });
+    } catch (error: any) {
+      set({ error: error });
     } finally {
       set({ isLoading: false });
     }
