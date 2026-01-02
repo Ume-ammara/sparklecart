@@ -84,7 +84,7 @@ const ProductCard = ({
         <div className="flex justify-between items-start">
           <div>
             <Link
-              href={`/products/${product._id}`}
+              href={`/products/${product.slug}`}
               className="text-base font-semibold line-clamp-1"
             >
               {product.name}

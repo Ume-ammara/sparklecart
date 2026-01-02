@@ -31,6 +31,18 @@ const useProductStore = create<ProductStore>((set, get) => ({
       set({ isLoading: false });
     }
   },
+
+  fetchProductById: async (slug: string) => {
+    try {
+      set({ isLoading: true, error: null, success: null });
+      const res = await axiosClient.get(`/products/${slug}`);
+      set({ product: res.data.data.product, success: res.data.message });
+    } catch (error: any) {
+      set({ error: error });
+    } finally {
+      set({ isLoading: false });
+    }
+  },
 }));
 
 export { useProductStore };
