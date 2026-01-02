@@ -34,6 +34,7 @@ export const useCartStore = create<CartStore>((set, get) => ({
     } catch (err: any) {
       set({
         error: err?.response?.data?.message || "Failed to fetch cart items",
+        carts: [],
       });
     } finally {
       set({ isLoading: false });
@@ -50,10 +51,12 @@ export const useCartStore = create<CartStore>((set, get) => ({
         quantity,
       });
 
-      set({
-        carts: res.data.data.cartItems,
+      set((state) => ({
+        carts: state.carts
+          ? [res.data.data.cartItems, ...state.carts]
+          : [res.data.data.cartItems],
         success: res.data.data.message,
-      });
+      }));
     } catch (err: any) {
       set({
         error: err?.response?.data?.message || "Failed to add product to cart",
